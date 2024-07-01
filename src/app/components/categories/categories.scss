@@ -1,0 +1,168 @@
+.categories {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+        font-size: 50px;
+        font-weight: 300;
+        margin-top: 40px;
+    }
+
+    .rows {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 10px;
+        width: 100%;
+
+        .row {
+            margin: 20px 0;
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            .img {
+                background-size: cover;
+                background-position: center;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: 0.4s;
+            }
+
+            .img:hover {
+                box-shadow: 0 0 50px 10px #1111118e;
+            }
+
+            .one {
+                width: 100%;
+                height: 450px;
+            }
+
+            .two {
+                width: 48%;
+                padding-top: 48%;
+                position: relative;
+                height: 0;
+            }
+
+            .two .inner {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-size: cover;
+                background-position: center;
+                border-radius: 10px;
+                transition: 0.4s;
+            }
+
+            .sun {
+                background-image: url('./katalog/sun.PNG');
+            }
+
+            .hair {
+                background-image: url('./katalog/hair.PNG');
+                filter: contrast(0.95);
+            }
+
+            .body {
+                background-image: url('./katalog/body.PNG');
+                filter: contrast(0.95);
+            }
+
+            .eyes {
+                background-image: url('./katalog/eyes.PNG');
+            }
+
+            .face {
+                background-image: url('./katalog/face.PNG');
+            }
+        }
+    }
+}
+
+// Media queries for responsiveness
+@media (max-width: 1200px) {
+    .categories h2 {
+        font-size: 40px;
+    }
+
+    .categories .rows .row .img.one {
+        height: 350px;
+    }
+
+    .categories .rows .row .two {
+        padding-top: 48%;
+    }
+}
+
+@media (max-width: 992px) {
+    .categories h2 {
+        font-size: 35px;
+    }
+
+    .categories .rows .row .img.one {
+        height: 300px;
+    }
+
+    .categories .rows .row .two {
+        padding-top: 48%;
+    }
+}
+
+@media (max-width: 768px) {
+    .categories .rows .row .img.one {
+        height: 250px;
+    }
+
+    .categories .rows .row .two {
+        padding-top: 48%;
+    }
+}
+
+@media (max-width: 576px) {
+    .categories h2 {
+        font-size: 30px;
+    }
+
+    .categories .rows .row .img.one {
+        height: 200px;
+    }
+
+    .categories .rows .row .two {
+        width: 100%;
+        padding-top: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .categories .rows .row {
+        flex-direction: column;
+    }
+
+    .categories {
+        .rows {
+            .row {
+
+
+                margin: 0;
+
+                div {
+                    margin: 10px 0;
+                }
+            }
+        }
+    }
+
+    .categories .rows .row .two {
+        width: 100%;
+        padding-top: 100%;
+    }
+}

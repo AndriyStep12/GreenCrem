@@ -1,0 +1,40 @@
+.action {
+    width: 100%;
+    height: 10vh;
+    background-color: #31AC72;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+
+    .white_text {
+        font-size: 20px;
+        width: 25%;
+        color: #fff;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        height: 90%;
+        width: auto;
+    }
+}
+
+@media (max-width: 847px) {
+    .action {
+        .white_text {
+            font-size: 15px;
+        }
+    }
+}
+
+@media (max-width: 420px) {
+    .action {
+        .white_text {
+            font-size: 11px;
+        }
+    }
+}
