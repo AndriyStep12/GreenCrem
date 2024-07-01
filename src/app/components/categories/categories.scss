@@ -63,17 +63,32 @@
                 transition: 0.4s;
             }
 
+            .sun {
+                background-image: url('./katalog/sun.PNG');
+            }
+
             .hair {
+                background-image: url('./katalog/hair.PNG');
                 filter: contrast(0.95);
             }
 
             .body {
+                background-image: url('./katalog/body.PNG');
                 filter: contrast(0.95);
+            }
+
+            .eyes {
+                background-image: url('./katalog/eyes.PNG');
+            }
+
+            .face {
+                background-image: url('./katalog/face.PNG');
             }
         }
     }
 }
 
+// Media queries for responsiveness
 @media (max-width: 1200px) {
     .categories h2 {
         font-size: 40px;

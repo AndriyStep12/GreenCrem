@@ -9,7 +9,7 @@ const multer = require("multer");
 
 
 const app = express();
-const PORT = 5000;
+const PORT = 11000;
 
 
 // --------------------------------------------------------- Importing models

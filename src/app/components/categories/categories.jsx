@@ -9,15 +9,15 @@ const Categories = () => {
             <h2>Категорії</h2>
             <div className="rows">
                 <div className="row typeOne">
-                    <div className="img one face" style={{backgroundImage: `url(/katalog/face.png)`}}></div>
+                    <div className="img one face"></div>
                 </div>
                 <div className="row typeTwo">
-                    <div className="img two eyes" style={{backgroundImage:  `url(/katalog/eyes.png)`}}></div>
-                    <div className="img two body" style={{backgroundImage:  `url(/katalog/body.png)`}}></div>
+                    <div className="img two eyes"></div>
+                    <div className="img two body"></div>
                 </div>
                 <div className="row typeTwo">
-                    <div className="img two hair" style={{backgroundImage:  `url(/katalog/hair.png)`}}></div>
-                    <div className="img two sun" style={{backgroundImage:  `url(/katalog/sun.png)`}}></div>
+                    <div className="img two hair"></div>
+                    <div className="img two sun"></div>
                 </div>
             </div>
         </div>
