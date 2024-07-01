@@ -64,25 +64,25 @@
             }
 
             .sun {
-                background-image: url('./katalog/sun.PNG');
+                background-image: url('/katalog/sun.png');
             }
 
             .hair {
-                background-image: url('./katalog/hair.PNG');
+                background-image: url('/katalog/hair.png');
                 filter: contrast(0.95);
             }
 
             .body {
-                background-image: url('./katalog/body.PNG');
+                background-image: url('/katalog/body.png');
                 filter: contrast(0.95);
             }
 
             .eyes {
-                background-image: url('./katalog/eyes.PNG');
+                background-image: url('/katalog/eyes.png');
             }
 
             .face {
-                background-image: url('./katalog/face.PNG');
+                background-image: url('/katalog/face.png');
             }
         }
     }
@@ -150,8 +150,6 @@
     .categories {
         .rows {
             .row {
-
-
                 margin: 0;
 
                 div {
