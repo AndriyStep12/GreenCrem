@@ -77,7 +77,7 @@ export default function Cart() {
     };
 
     const sendOrderEmail = async () => {
-        const response = await fetch('http://localhost:5000/send-order', {
+        const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -58,7 +58,7 @@ export default function AdminPanel() {
     });
 
     try {
-      const result = await axios.post("http://localhost:5000/upload-image", formData, {
+      const result = await axios.post("https://greencrem.onrender.com/upload-image", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log(result.data);
