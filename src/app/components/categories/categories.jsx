@@ -1,47 +1,30 @@
 "use client";
 import React from "react";
 import './categories.scss';
-import Link from "next/link";
 
 const Categories = () => {
-    return(
+    const handleImgClick = (path) => {
+        window.location.href = path;
+    };
+
+    return (
         <div className="categories">
             <h2>Категорії</h2>
             <div className="rows">
                 <div className="row typeOne">
-                    <Link href="/products/face" passHref>
-                        <a>
-                            <div className="img one face"></div>
-                        </a>
-                    </Link>
+                    <div className="img one face" onClick={() => handleImgClick('/products/face')}></div>
                 </div>
                 <div className="row typeTwo">
-                    <Link href="/products/eyes" passHref>
-                        <a>
-                            <div className="img two eyes"></div>
-                        </a>
-                    </Link>
-                    <Link href="/products/body" passHref>
-                        <a>
-                            <div className="img two body"></div>
-                        </a>
-                    </Link>
+                    <div className="img two eyes" onClick={() => handleImgClick('/products/eyes')}></div>
+                    <div className="img two body" onClick={() => handleImgClick('/products/body')}></div>
                 </div>
                 <div className="row typeTwo">
-                    <Link href="/products/hair" passHref>
-                        <a>
-                            <div className="img two hair"></div>
-                        </a>
-                    </Link>
-                    <Link href="/products/sun" passHref>
-                        <a>
-                            <div className="img two sun"></div>
-                        </a>
-                    </Link>
+                    <div className="img two hair" onClick={() => handleImgClick('/products/hair')}></div>
+                    <div className="img two sun" onClick={() => handleImgClick('/products/sun')}></div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default Categories;
