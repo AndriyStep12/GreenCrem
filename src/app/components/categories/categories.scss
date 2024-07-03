@@ -68,21 +68,21 @@
             }
 
             .hair {
-                background-image: url('./katalog/hair.png');
+                background-image: url('/katalog/hair.png');
                 filter: contrast(0.95);
             }
 
             .body {
-                background-image: url('./katalog/body.png');
+                background-image: url('/katalog/body.png');
                 filter: contrast(0.95);
             }
 
             .eyes {
-                background-image: url('./katalog/eyes.png');
+                background-image: url('/katalog/eyes.png');
             }
 
             .face {
-                background-image: url('./katalog/face.png');
+                background-image: url('/katalog/face.png');
             }
         }
     }
