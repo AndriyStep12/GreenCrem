@@ -11,7 +11,7 @@ const Categories = () => {
                 <div className="row typeOne">
                     <Image 
                         className="img one face"
-                        src="/face.png"
+                        src="https://images-orcin-iota.vercel.app/face.png"
                         alt="Face"
                         layout="fill"
                         objectFit="cover"
@@ -20,14 +20,14 @@ const Categories = () => {
                 <div className="row typeTwo">
                     <Image 
                         className="img two eyes"
-                        src="/eyes.png"
+                        src="https://images-orcin-iota.vercel.app/eyes.png"
                         alt="Eyes"
                         layout="fill"
                         objectFit="cover"
                     />
                     <Image 
                         className="img two body"
-                        src="/body.png"
+                        src="https://images-orcin-iota.vercel.app/body.png"
                         alt="Body"
                         layout="fill"
                         objectFit="cover"
@@ -36,14 +36,14 @@ const Categories = () => {
                 <div className="row typeTwo">
                     <Image 
                         className="img two hair"
-                        src="/hair.png"
+                        src="https://images-orcin-iota.vercel.app/hair.png"
                         alt="Hair"
                         layout="fill"
                         objectFit="cover"
                     />
                     <Image 
                         className="img two sun"
-                        src="/katalog/sun.png"
+                        src="https://images-orcin-iota.vercel.app/sun.png"
                         alt="Sun"
                         layout="fill"
                         objectFit="cover"
