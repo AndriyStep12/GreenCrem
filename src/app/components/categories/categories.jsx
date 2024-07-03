@@ -10,23 +10,23 @@ const Categories = () => {
             <h2>Категорії</h2>
             <div className="rows">
                 <div className="row typeOne">
-                    <Link href={'/products/face'}>
+                    <Link href="/products/face">
                         <div className="img one face"></div>
                     </Link>
                 </div>
                 <div className="row typeTwo">
-                    <Link href={'/products/eyes'}>
+                    <Link href="/products/eyes">
                         <div className="img two eyes"></div>
                     </Link>
-                    <Link href={'/products/body'}>
+                    <Link href="/products/body">
                         <div className="img two body"></div>
                     </Link>
                 </div>
                 <div className="row typeTwo">
-                    <Link href={'/products/hair'}>
+                    <Link href="/products/hair">
                         <div className="img two hair"></div>
                     </Link>
-                    <Link href={'/products/sun'}>
+                    <Link href="/products/sun">
                         <div className="img two sun"></div>
                     </Link>
                 </div>
