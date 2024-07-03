@@ -26,9 +26,10 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            position: relative; // Додано для правильного відображення Image
 
             .img {
+                background-size: cover;
+                background-position: center;
                 border-radius: 10px;
                 cursor: pointer;
                 transition: 0.4s;
@@ -41,7 +42,6 @@
             .one {
                 width: 100%;
                 height: 450px;
-                position: relative;
             }
 
             .two {
@@ -51,23 +51,38 @@
                 height: 0;
             }
 
-            .sun,
-            .hair,
-            .body,
-            .eyes,
-            .face {
+            .two .inner {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
                 background-size: cover;
                 background-position: center;
                 border-radius: 10px;
                 transition: 0.4s;
             }
 
+            .sun {
+                background-image: url('/katalog/sun.png');
+            }
+
             .hair {
+                background-image: url('/hair.png');
                 filter: contrast(0.95);
             }
 
             .body {
+                background-image: url('/body.png');
                 filter: contrast(0.95);
+            }
+
+            .eyes {
+                background-image: url('/eyes.png');
+            }
+
+            .face {
+                background-image: url('/face.png');
             }
         }
     }
