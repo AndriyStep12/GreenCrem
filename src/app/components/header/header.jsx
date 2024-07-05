@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Cookies from 'js-cookie';
+import likes from "@/functions/likes";
 import { updateCart, updateWishlist } from '@/functions/cartUtils';
 import './header.scss';
 
 const Header = () => {
+    const { likes, likesIncrement, likesDecrement } = likes();
     const [search, setSearch] = useState('');
     const [cartCount, setCartCount] = useState(0);
     const [wishlistCount, setWishlistCount] = useState(0);
@@ -67,7 +69,7 @@ const Header = () => {
                 <Link href={'/wishlist'}>
                     <button className="iconBtn" alt="fav">
                         <Image className="icon" src="/icons/favourite.png" alt="favourite" width={100} height={100} />
-                        {wishlistCount > 0 && <span className="badge">{wishlistCount}</span>}
+                        {likes > 0 && <span className="badge">{likes}</span>}
                     </button>
                 </Link>
             </div>
