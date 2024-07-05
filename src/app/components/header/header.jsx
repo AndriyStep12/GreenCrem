@@ -10,7 +10,7 @@ import useLikesStore from "@/functions/likes";
 const Header = () => {
     const [search, setSearch] = useState('');
     const [cartCount, setCartCount] = useState(0);
-    const [wishlistCount, setWishlistCount] = useState(0);
+    // const [wishlistCount, setWishlistCount] = useState(0);
     const { likes, likesIncrement, likesDecrement } = useLikesStore();
 
     useEffect(() => {
@@ -20,10 +20,23 @@ const Header = () => {
         setCartCount(cartItems.length);
         setWishlistCount(wishlistItems.length);
 
- 
+        const handleCartChange = () => {
+            const updatedCartItems = JSON.parse(Cookies.get('cart') || '[]');
+            setCartCount(updatedCartItems.length);
+        };
+
+        const handleWishlistChange = () => {
+            const updatedWishlistItems = JSON.parse(localStorage.getItem('loved') || '[]');
+            setWishlistCount(updatedWishlistItems.length);
+        };
 
         window.addEventListener('cartChanged', handleCartChange);
         window.addEventListener('wishlistChanged', handleWishlistChange);
+
+        return () => {
+            window.removeEventListener('cartChanged', handleCartChange);
+            window.removeEventListener('wishlistChanged', handleWishlistChange);
+        };
     }, []);
 
     const handleSearchChange = (e) => {
