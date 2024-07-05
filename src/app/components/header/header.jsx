@@ -10,7 +10,7 @@ import useLikesStore from "@/functions/likes";
 const Header = () => {
     const [search, setSearch] = useState('');
     const [cartCount, setCartCount] = useState(0);
-    // const [wishlistCount, setWishlistCount] = useState(0);
+    const [wishlistCount, setWishlistCount] = useState(0);
     const { likes, likesIncrement, likesDecrement } = useLikesStore();
 
     useEffect(() => {
