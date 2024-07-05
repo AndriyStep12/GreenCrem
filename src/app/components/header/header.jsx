@@ -29,7 +29,7 @@ const Header = () => {
             <div className="search">
                 <input value={search} onChange={handleSearchChange} type="text" placeholder="Пошук..." />
                 <Link href={`/products/search/${search}`}>
-                    <button className="iconBtn" alt="search">
+                    <button className="iconBtn" id="searchBtn" alt="search">
                         <Image className="icon" src="/icons/search.png" alt="search" width={100} height={100} />
                     </button>
                 </Link>
