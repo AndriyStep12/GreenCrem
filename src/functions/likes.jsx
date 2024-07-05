@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-const getWishlistItems = () => JSON.parse(localStorage.getItem('loved') || '[]');
+const getWishlistItems = () => JSON.parse(localStorage.getItem('loved') || []);
 
 const useLikesStore = create((set) => ({
   likes: getWishlistItems().length,
