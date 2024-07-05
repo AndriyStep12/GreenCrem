@@ -5,11 +5,13 @@ import Link from "next/link";
 import Cookies from 'js-cookie';
 import { updateCart, updateWishlist } from '@/functions/cartUtils';
 import './header.scss';
+import useLikesStore from "@/functions/likes";
 
 const Header = () => {
     const [search, setSearch] = useState('');
     const [cartCount, setCartCount] = useState(0);
     const [wishlistCount, setWishlistCount] = useState(0);
+    const { likes, likesIncrement, likesDecrement } = useLikesStore();
 
     useEffect(() => {
         const cartItems = JSON.parse(Cookies.get('cart') || '[]');
@@ -18,23 +20,10 @@ const Header = () => {
         setCartCount(cartItems.length);
         setWishlistCount(wishlistItems.length);
 
-        const handleCartChange = () => {
-            const updatedCartItems = JSON.parse(Cookies.get('cart') || '[]');
-            setCartCount(updatedCartItems.length);
-        };
-
-        const handleWishlistChange = () => {
-            const updatedWishlistItems = JSON.parse(localStorage.getItem('loved') || '[]');
-            setWishlistCount(updatedWishlistItems.length);
-        };
+ 
 
         window.addEventListener('cartChanged', handleCartChange);
         window.addEventListener('wishlistChanged', handleWishlistChange);
-
-        return () => {
-            window.removeEventListener('cartChanged', handleCartChange);
-            window.removeEventListener('wishlistChanged', handleWishlistChange);
-        };
     }, []);
 
     const handleSearchChange = (e) => {
@@ -67,7 +56,7 @@ const Header = () => {
                 <Link href={'/wishlist'}>
                     <button className="iconBtn" alt="fav">
                         <Image className="icon" src="/icons/favourite.png" alt="favourite" width={100} height={100} />
-                        {wishlistCount > 0 && <span className="badge">{wishlistCount}</span>}
+                        {likes > 0 && <span className="badge">{likes}</span>}
                     </button>
                 </Link>
             </div>
