@@ -1,11 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import likes from "@/functions/likes";
 import './loveBtn.scss';
 
 const LoveBtn = ({ idGood }) => {
-    const { likes, likesIncrement, likesDecrement } = likes();
     const [loved, setLoved] = useState([]);
     const [status, setStatus] = useState(false);
 
@@ -24,10 +22,8 @@ const LoveBtn = ({ idGood }) => {
         let updatedLoved;
         if (status) {
             updatedLoved = savedLoved.filter(item => item !== idGood);
-            likesDecrement()
         } else {
             updatedLoved = [...savedLoved, idGood];
-            likesIncrement()
         }
         setLoved(updatedLoved);
         localStorage.setItem('loved', JSON.stringify(updatedLoved));
