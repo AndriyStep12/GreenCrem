@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Head from "next/head";
 import './admin.scss';
 
 export default function AdminPanel() {
@@ -68,20 +69,26 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="adminWrap">
-      <h1>Admin Panel</h1>
-      <form onSubmit={submit}>
-        <input type="file" accept="image/*" onChange={onInputChangeImage} />
-        <input type="text" placeholder="Назва" value={name} onChange={onInputChangeName} />
-        <input type="text" placeholder="Опис" value={description} onChange={onInputChangeDescription} />
-        <input type="number" placeholder="Ціна" value={price} onChange={onInputChangePrice} />
-        <input type="number" placeholder="Кількість" value={count} onChange={onInputChangeCount} />
-        <div className="tags">
-          <input type="text" placeholder="Тег" value={tag} onChange={onInputChangeTag} />
-          <button className="tagUploader" onClick={addTag}>Добавити тег</button>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <>
+      <Head>
+        <link rel="icon" href="/Logo.webp" />
+        <title>Admin Panel. Green Crem - магазин косметики в Україні</title>
+      </Head>
+      <div className="adminWrap">
+        <h1>Admin Panel</h1>
+        <form onSubmit={submit}>
+          <input type="file" accept="image/*" onChange={onInputChangeImage} />
+          <input type="text" placeholder="Назва" value={name} onChange={onInputChangeName} />
+          <input type="text" placeholder="Опис" value={description} onChange={onInputChangeDescription} />
+          <input type="number" placeholder="Ціна" value={price} onChange={onInputChangePrice} />
+          <input type="number" placeholder="Кількість" value={count} onChange={onInputChangeCount} />
+          <div className="tags">
+            <input type="text" placeholder="Тег" value={tag} onChange={onInputChangeTag} />
+            <button className="tagUploader" onClick={addTag}>Добавити тег</button>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </>
   );
 }

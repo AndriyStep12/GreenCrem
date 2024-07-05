@@ -4,6 +4,7 @@ import LeftBar from "@/app/components/leftBar/leftBar";
 import Loader from "@/app/components/loader/loader";
 import fetchGoodsFromServer from "@/functions/array";
 import Good from "@/app/components/good/good";
+import Head from "next/head";
 import './searcher.scss'
 
 export default function Searching({ params: { id } }) {
@@ -47,23 +48,29 @@ export default function Searching({ params: { id } }) {
     };
 
     return (
-        <div className="searcher">
-            <LeftBar/>
-            <div className="content">
-                <h2>Пошук {id}</h2>
-                {loading ? (
-                    <Loader />
-                ) : (
+        <>
+            <Head>
+                <link rel="icon" href="/Logo.webp" />
+                <title>Пошук {id}. Green Crem - магазин косметики в Україні</title>
+            </Head>
+            <div className="searcher">
+                <LeftBar/>
+                <div className="content">
+                    <h2>Пошук {id}</h2>
+                    {loading ? (
+                        <Loader />
+                    ) : (
                     
                         <div className="row">
                             {filteredGoods.length > 0 ? (
                                 filteredGoods.map(item => <Good key={item} id={item.id} name={item.name} price={item.price} descrption={item.description} count={item.count} img={item.img} />)
                             ) : (
-                                <p>No results found for "{decodedId}"</p>
+                                <p>Не знайдено "{decodedId}"</p>
                             )}
                         </div>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }

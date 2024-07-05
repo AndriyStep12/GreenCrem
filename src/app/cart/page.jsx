@@ -5,8 +5,9 @@ import LeftBar from "../components/leftBar/leftBar";
 import fetchGoodsFromServer from "@/functions/array";
 import Item from "./item/item";
 import Loader from "../components/loader/loader";
-import './cart.scss';
 import useCartStore from "@/functions/cart";
+import Head from "next/head";
+import './cart.scss';
 
 export default function Cart() {
     const { carts, cartsIncrement, cartsDecrement } = useCartStore();
@@ -104,49 +105,55 @@ export default function Cart() {
     }, [showPopup]);
 
     return (
-        <div className="cart">
-            <LeftBar />
-            {loading ? <Loader/> :
-                <div className="content">
-                    <h2>Корзина</h2>
-                    <div className="row">
-                        {cartItems.length > 0 ? (
-                            cartItems.map(item => (
-                                <Item key={item.id} idGood={item.id} count={item.count} price={item.price} removeFromCart={removeFromCart} />
-                            ))
-                        ) : (
-                            <h3 className="pusto" style={{textAlign: "center"}}>Ваша корзина пуста</h3>
+        <>
+            <Head>
+                <link rel="icon" href="/Logo.webp" />
+                <title>Корзина. Green Crem - магазин косметики в Україні</title>
+            </Head>
+            <div className="cart">
+                <LeftBar />
+                {loading ? <Loader/> :
+                    <div className="content">
+                        <h2>Корзина</h2>
+                        <div className="row">
+                            {cartItems.length > 0 ? (
+                                cartItems.map(item => (
+                                    <Item key={item.id} idGood={item.id} count={item.count} price={item.price} removeFromCart={removeFromCart} />
+                                ))
+                            ) : (
+                                <h3 className="pusto" style={{textAlign: "center"}}>Ваша корзина пуста</h3>
+                            )}
+                        </div>
+                        {cartItems.length > 0 && (
+                            <button className="send-order-btn" onClick={() => setShowPopup(true)}>
+                                Відправити замовлення
+                            </button>
                         )}
                     </div>
-                    {cartItems.length > 0 && (
-                        <button className="send-order-btn" onClick={() => setShowPopup(true)}>
-                            Відправити замовлення
-                        </button>
-                    )}
-                </div>
-            }
-            {showPopup && (
-                <>
-                    <div className="overlay" />
-                    <div className="popup">
-                        <div className="popup-content">
-                            <h2>Оформлення замовлення</h2>
-                            <label>
-                                <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} />
-                            </label>
-                            <label>
-                                <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} />
-                            </label>
-                            <label>
-                                <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} />
-                            </label>
-                            <span>Вартість: {totalPrice}$</span>
-                            <button onClick={sendOrderEmail}>Підтвердити</button>
-                            <button className="cancel" onClick={() => setShowPopup(false)}>Скасувати</button>
+                }
+                {showPopup && (
+                    <>
+                        <div className="overlay" />
+                        <div className="popup">
+                            <div className="popup-content">
+                                <h2>Оформлення замовлення</h2>
+                                <label>
+                                    <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} />
+                                </label>
+                                <label>
+                                    <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} />
+                                </label>
+                                <label>
+                                    <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} />
+                                </label>
+                                <span>Вартість: {totalPrice}$</span>
+                                <button onClick={sendOrderEmail}>Підтвердити</button>
+                                <button className="cancel" onClick={() => setShowPopup(false)}>Скасувати</button>
+                            </div>
                         </div>
-                    </div>
-                </>
-            )}
-        </div>
+                    </>
+                )}
+            </div>
+        </>
     );
 }

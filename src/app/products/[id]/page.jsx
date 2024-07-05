@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import Loader from "@/app/components/loader/loader";
 import confetti from "canvas-confetti";
 import useCartStore from "@/functions/cart";
+import Head from "next/head";
 
 export default function Product({ params: { id } }) {
     const { carts, cartsIncrement, cartsDecrement } = useCartStore();
@@ -75,33 +76,39 @@ export default function Product({ params: { id } }) {
     }
 
     return (
-        <div className="product">
-            <LeftBar />
-            {loading ? <Loader/> :
-                <div className="product_page">
-                    <div className="product_image">
-                        {product.img && <Image src={`/uploads/${product.img}`} alt={product.name} width={1000} height={1000} className="img_product" />}
-                    </div>
-                    <div className="product_info">
-                        <h2 className="name">{product.name}</h2>
-                        <h3 className="price">Ціна: {product.price}₴</h3>
-                        <p>Опис: {product.description}</p>
-                        {product.count > 0 ? <div className="count">
-                            <button className="btn" onClick={functionMinus}>-</button>
-                            <div className="counter">{count}</div>
-                            <button className="btn" onClick={functionAdd}>+</button>
-                        </div> : null}
-                        <div className="btn_row">
-                            <div className="first">
-                                {product.count > 0 ? <button onClick={addToCart} className="addToCart">
-                                    Добавити до корзини
-                                </button> : <p className="no">Нема в наявності :(</p>}
+        <>
+            <Head>
+                <link rel="icon" href="/Logo.webp" />
+                <title>Купити {product.name}. Green Crem</title>
+            </Head>
+            <div className="product">
+                <LeftBar />
+                {loading ? <Loader/> :
+                    <div className="product_page">
+                        <div className="product_image">
+                            {product.img && <Image src={`/uploads/${product.img}`} alt={product.name} width={1000} height={1000} className="img_product" />}
+                        </div>
+                        <div className="product_info">
+                            <h2 className="name">{product.name}</h2>
+                            <h3 className="price">Ціна: {product.price}₴</h3>
+                            <p>Опис: {product.description}</p>
+                            {product.count > 0 ? <div className="count">
+                                <button className="btn" onClick={functionMinus}>-</button>
+                                <div className="counter">{count}</div>
+                                <button className="btn" onClick={functionAdd}>+</button>
+                            </div> : null}
+                            <div className="btn_row">
+                                <div className="first">
+                                    {product.count > 0 ? <button onClick={addToCart} className="addToCart">
+                                        Добавити до корзини
+                                    </button> : <p className="no">Нема в наявності :(</p>}
+                                </div>
+                                <LoveBtn idGood={id} />
                             </div>
-                            <LoveBtn idGood={id} />
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        </>
     );
 }
