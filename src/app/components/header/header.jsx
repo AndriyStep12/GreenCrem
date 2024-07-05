@@ -6,38 +6,13 @@ import Cookies from 'js-cookie';
 import { updateCart, updateWishlist } from '@/functions/cartUtils';
 import './header.scss';
 import useLikesStore from "@/functions/likes";
+import useCartStore from "@/functions/cart";
 
 const Header = () => {
     const [search, setSearch] = useState('');
-    const [cartCount, setCartCount] = useState(0);
-    const [wishlistCount, setWishlistCount] = useState(0);
     const { likes, likesIncrement, likesDecrement } = useLikesStore();
+    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
 
-    useEffect(() => {
-        const cartItems = JSON.parse(Cookies.get('cart') || '[]');
-        const wishlistItems = JSON.parse(localStorage.getItem('loved') || '[]');
-
-        setCartCount(cartItems.length);
-        setWishlistCount(wishlistItems.length);
-
-        const handleCartChange = () => {
-            const updatedCartItems = JSON.parse(Cookies.get('cart') || '[]');
-            setCartCount(updatedCartItems.length);
-        };
-
-        const handleWishlistChange = () => {
-            const updatedWishlistItems = JSON.parse(localStorage.getItem('loved') || '[]');
-            setWishlistCount(updatedWishlistItems.length);
-        };
-
-        window.addEventListener('cartChanged', handleCartChange);
-        window.addEventListener('wishlistChanged', handleWishlistChange);
-
-        return () => {
-            window.removeEventListener('cartChanged', handleCartChange);
-            window.removeEventListener('wishlistChanged', handleWishlistChange);
-        };
-    }, []);
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
@@ -63,7 +38,7 @@ const Header = () => {
                 <Link href={'/cart'}>
                     <button className="iconBtn" alt="cart">
                         <Image className="icon" src="/icons/cart.png" alt="cart" width={100} height={100} />
-                        {cartCount > 0 && <span className="badge">{cartCount}</span>}
+                        {carts > 0 && <span className="badge">{carts}</span>}
                     </button>
                 </Link>
                 <Link href={'/wishlist'}>

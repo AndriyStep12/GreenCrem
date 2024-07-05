@@ -8,8 +8,10 @@ import fetchGoodsFromServer from "@/functions/array";
 import Cookies from 'js-cookie';
 import Loader from "@/app/components/loader/loader";
 import confetti from "canvas-confetti";
+import useCartStore from "@/functions/cart";
 
 export default function Product({ params: { id } }) {
+    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
     const [goods, setGoods] = useState([]);
     const [product, setProduct] = useState({});
     const [count, setCount] = useState(1);
@@ -64,12 +66,12 @@ export default function Product({ params: { id } }) {
         Cookies.set('cart', JSON.stringify(cartItems), { expires: 7 }); // Cookies зберігається на 7 днів
         console.log(cartItems);
         
-        // Trigger confetti effect
         confetti({
             particleCount: 150,
             spread: 60,
             origin: { y: 0.6 }
         });
+        cartsIncrement()
     }
 
     return (

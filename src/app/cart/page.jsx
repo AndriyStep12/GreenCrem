@@ -6,8 +6,10 @@ import fetchGoodsFromServer from "@/functions/array";
 import Item from "./item/item";
 import Loader from "../components/loader/loader";
 import './cart.scss';
+import useCartStore from "@/functions/cart";
 
 export default function Cart() {
+    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
     const [totalPrice, setTotalPrice] = useState(0);
     const [loading, setLoading] = useState(true);
     const [cartItems, setCartItems] = useState([]);
@@ -68,7 +70,8 @@ export default function Cart() {
         const updatedCart = cartItems.filter(item => item.id !== idGood);
         setCartItems(updatedCart);
         Cookies.set('cart', JSON.stringify(updatedCart), { expires: 7 });
-        calculateTotalPrice(); // recalculate total price after removal
+        calculateTotalPrice();
+        cartsDecrement()
     };
 
     const handleInputChange = (e) => {
