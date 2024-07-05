@@ -61,6 +61,7 @@ export default function Product({ params: { id } }) {
             existingItem.count += count;
         } else {
             cartItems.push({ id, count });
+            cartsIncrement()
         }
 
         Cookies.set('cart', JSON.stringify(cartItems), { expires: 7 }); // Cookies зберігається на 7 днів
@@ -71,7 +72,6 @@ export default function Product({ params: { id } }) {
             spread: 60,
             origin: { y: 0.6 }
         });
-        cartsIncrement()
     }
 
     return (
