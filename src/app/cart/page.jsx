@@ -10,7 +10,7 @@ import Head from "next/head";
 import './cart.scss';
 
 export default function Cart() {
-    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
+    const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
     const [totalPrice, setTotalPrice] = useState(0);
     const [loading, setLoading] = useState(true);
     const [cartItems, setCartItems] = useState([]);
@@ -94,6 +94,7 @@ export default function Cart() {
         setTotalPrice(0);
         alert('Замовлення відправлено!');
         setShowPopup(false);
+        cartsZero()
     };
 
     useEffect(() => {

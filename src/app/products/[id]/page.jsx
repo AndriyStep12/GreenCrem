@@ -12,7 +12,7 @@ import useCartStore from "@/functions/cart";
 import Head from "next/head";
 
 export default function Product({ params: { id } }) {
-    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
+    const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
     const [goods, setGoods] = useState([]);
     const [product, setProduct] = useState({});
     const [count, setCount] = useState(1);
