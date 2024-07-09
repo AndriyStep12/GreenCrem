@@ -9,6 +9,12 @@ import Loader from "@/app/components/loader/loader";
 import Head from "next/head";
 import '../products.scss'
 
+export const metadata = {
+    title: "Догляд за волоссям. Green Crem - магазин косметики в Україні",
+    description: "Green Crem - магазин косметики в Україні",
+};
+
+
 export default function Face(){
 
     const [loading, setLoading] = useState(true)
@@ -37,10 +43,6 @@ export default function Face(){
 
     return(
         <>
-            <Head>
-                <link rel="icon" href="/Logo.webp" />
-                <title>Догляд за волоссям. Green Crem - магазин косметики в Україні</title>
-            </Head>
             <div className="products">
                 <LeftBar />
                 {loading ? <Loader/>:

@@ -4,6 +4,11 @@ import axios from "axios";
 import Head from "next/head";
 import './admin.scss';
 
+export const metadata = {
+  title: "Admin Panel. Green Crem - магазин косметики в Україні",
+  description: "Admin Panel. Green Crem - магазин косметики в Україні",
+};
+
 export default function AdminPanel() {
   const [image, setImage] = useState(null);
   const [name, setName] = useState('');
@@ -70,10 +75,6 @@ export default function AdminPanel() {
 
   return (
     <>
-      <Head>
-        <link rel="icon" href="/Logo.webp" />
-        <title>Admin Panel. Green Crem - магазин косметики в Україні</title>
-      </Head>
       <div className="adminWrap">
         <h1>Admin Panel</h1>
         <form onSubmit={submit}>

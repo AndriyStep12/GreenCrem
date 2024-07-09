@@ -9,6 +9,11 @@ import useCartStore from "@/functions/cart";
 import Head from "next/head";
 import './cart.scss';
 
+export const metadata = {
+    title: "Корзина. Green Crem - магазин косметики в Україні",
+    description: "Корзина. Green Crem - магазин косметики в Україні",
+};
+
 export default function Cart() {
     const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
     const [totalPrice, setTotalPrice] = useState(0);
@@ -107,10 +112,6 @@ export default function Cart() {
 
     return (
         <>
-            <Head>
-                <link rel="icon" href="/Logo.webp" />
-                <title>Корзина. Green Crem - магазин косметики в Україні</title>
-            </Head>
             <div className="cart">
                 <LeftBar />
                 {loading ? <Loader/> :

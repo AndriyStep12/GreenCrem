@@ -7,6 +7,12 @@ import Good from "@/app/components/good/good";
 import Head from "next/head";
 import './searcher.scss'
 
+export const metadata = {
+    title: "Пошук товарів. Green Crem - магазин косметики в Україні",
+    description: "Green Crem - магазин косметики в Україні",
+};
+
+
 export default function Searching({ params: { id } }) {
     const [loading, setLoading] = useState(true);
     const [goods, setGoods] = useState([]);
@@ -49,10 +55,6 @@ export default function Searching({ params: { id } }) {
 
     return (
         <>
-            <Head>
-                <link rel="icon" href="/Logo.webp" />
-                <title>Пошук {id}. Green Crem - магазин косметики в Україні</title>
-            </Head>
             <div className="searcher">
                 <LeftBar/>
                 <div className="content">

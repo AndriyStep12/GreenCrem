@@ -6,6 +6,12 @@ import Good from '../components/good/good';
 import fetchGoodsFromServer from '@/functions/array';
 import Head from 'next/head';
 
+export const metadata = {
+    title: "Всі товари. Green Crem - магазин косметики в Україні",
+    description: "Green Crem - магазин косметики в Україні",
+};
+
+
 export default function Products() {
 
     const [goods, setGoods] = useState([]);
@@ -25,10 +31,6 @@ export default function Products() {
 
     return (
         <>
-            <Head>
-                <link rel="icon" href="/Logo.webp" />
-                <title>Всі товари. Green Crem - магазин косметики в Україні</title>
-            </Head>
             <div className="products">
                 <LeftBar />
                 <div className="content">

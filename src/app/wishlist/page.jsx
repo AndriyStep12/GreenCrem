@@ -6,6 +6,13 @@ import Loader from "../components/loader/loader";
 import Head from "next/head";
 import './wishlist.scss'
 
+
+export const metadata = {
+    title: "Список бажаного. Green Crem - магазин косметики в Україні",
+    description: "Green Crem - магазин косметики в Україні",
+};
+
+
 export default function Wishlist () {
 
     const [loading, setLoading] = useState(true)
@@ -20,10 +27,6 @@ export default function Wishlist () {
 
     return(
         <>
-            <Head>
-                <link rel="icon" href="/Logo.webp" />
-                <title>Green Crem. Список бажаного</title>
-            </Head>
             <div className="wishlist">
                 <LeftBar/>
                 {loading ? <Loader/>: 
