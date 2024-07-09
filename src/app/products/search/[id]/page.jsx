@@ -7,10 +7,6 @@ import Good from "@/app/components/good/good";
 import Head from "next/head";
 import './searcher.scss'
 
-export const metadata = {
-    title: "Пошук товарів. Green Crem - магазин косметики в Україні",
-    description: "Green Crem - магазин косметики в Україні",
-};
 
 
 export default function Searching({ params: { id } }) {

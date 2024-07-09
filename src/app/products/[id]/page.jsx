@@ -9,29 +9,38 @@ import Cookies from 'js-cookie';
 import Loader from "@/app/components/loader/loader";
 import confetti from "canvas-confetti";
 import useCartStore from "@/functions/cart";
-import Head from "next/head";
-
-export async function getServerSideProps(context) {
-    const { id } = context.params;
-    const goods = await fetchGoodsFromServer();
-    const product = goods.find(good => good.id === id) || {};
-
-    return {
-        props: {
-            product,
-        },
-    };
-}
 
 
-export default function Product({ product }) {
+export default function Product({ params: { id } }) {
     const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
+    const [goods, setGoods] = useState([]);
+    const [product, setProduct] = useState({});
     const [count, setCount] = useState(1);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(false);
+        const fetchGoods = async () => {
+            try {
+                const fetchedGoods = await fetchGoodsFromServer();
+                setGoods(fetchedGoods);
+            } catch (error) {
+                console.error('Error setting goods:', error);
+            }
+        };
+
+        fetchGoods();
     }, []);
+
+    useEffect(() => {
+        if (goods.length > 0) {
+            setProduct(findGoodById(goods, id));
+        }
+        setLoading(false);
+    }, [goods, id]);
+
+    function findGoodById(goods, id) {
+        return goods.find(good => good.id === id) || {};
+    }
 
     function functionAdd() {
         if (count < 10) {
@@ -47,18 +56,18 @@ export default function Product({ product }) {
 
     function addToCart() {
         const cartItems = JSON.parse(Cookies.get('cart') || '[]');
-        const existingItem = cartItems.find(item => item.id === product.id);
+        const existingItem = cartItems.find(item => item.id === id);
 
         if (existingItem) {
             existingItem.count += count;
         } else {
-            cartItems.push({ id: product.id, count });
-            cartsIncrement();
+            cartItems.push({ id, count });
+            cartsIncrement()
         }
 
         Cookies.set('cart', JSON.stringify(cartItems));
         console.log(cartItems);
-
+        
         confetti({
             particleCount: 150,
             spread: 60,
@@ -70,7 +79,7 @@ export default function Product({ product }) {
         <>
             <div className="product">
                 <LeftBar />
-                {loading ? <Loader /> :
+                {loading ? <Loader/> :
                     <div className="product_page">
                         <div className="product_image">
                             {product.img && <Image src={`/uploads/${product.img}`} alt={product.name} width={1000} height={1000} className="img_product" />}
@@ -90,7 +99,7 @@ export default function Product({ product }) {
                                         Добавити до корзини
                                     </button> : <p className="no">Нема в наявності :(</p>}
                                 </div>
-                                <LoveBtn idGood={product.id} />
+                                <LoveBtn idGood={id} />
                             </div>
                         </div>
                     </div>
