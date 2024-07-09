@@ -23,10 +23,6 @@ export async function getServerSideProps(context) {
     };
 }
 
-export const metadata = ({ product }) => ({
-    title: `Купити ${product.name}. Green Crem`,
-    description: "Green Crem - магазин косметики в Україні",
-});
 
 export default function Product({ product }) {
     const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();

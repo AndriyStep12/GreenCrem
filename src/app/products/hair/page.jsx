@@ -9,10 +9,6 @@ import Loader from "@/app/components/loader/loader";
 import Head from "next/head";
 import '../products.scss'
 
-export const metadata = {
-    title: "Догляд за волоссям. Green Crem - магазин косметики в Україні",
-    description: "Green Crem - магазин косметики в Україні",
-};
 
 
 export default function Face(){

@@ -9,11 +9,6 @@ import Head from "next/head";
 import Loader from "@/app/components/loader/loader";
 import '../products.scss'
 
-export const metadata = {
-    title: "Сонцезахист. Green Crem - магазин косметики в Україні",
-    description: "Green Crem - магазин косметики в Україні",
-};
-
 
 export default function Face(){
 

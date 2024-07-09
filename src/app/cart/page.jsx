@@ -9,10 +9,6 @@ import useCartStore from "@/functions/cart";
 import Head from "next/head";
 import './cart.scss';
 
-export const metadata = {
-    title: "Корзина. Green Crem - магазин косметики в Україні",
-    description: "Корзина. Green Crem - магазин косметики в Україні",
-};
 
 export default function Cart() {
     const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();

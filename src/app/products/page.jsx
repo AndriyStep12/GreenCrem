@@ -6,11 +6,6 @@ import Good from '../components/good/good';
 import fetchGoodsFromServer from '@/functions/array';
 import Head from 'next/head';
 
-export const metadata = {
-    title: "Всі товари. Green Crem - магазин косметики в Україні",
-    description: "Green Crem - магазин косметики в Україні",
-};
-
 
 export default function Products() {
 

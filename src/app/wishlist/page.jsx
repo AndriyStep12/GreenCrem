@@ -3,14 +3,9 @@ import React, {useState, useEffect} from "react";
 import LeftBar from "../components/leftBar/leftBar";
 import Wish from "./wishBlock/wish";
 import Loader from "../components/loader/loader";
-import Head from "next/head";
 import './wishlist.scss'
 
 
-export const metadata = {
-    title: "Список бажаного. Green Crem - магазин косметики в Україні",
-    description: "Green Crem - магазин косметики в Україні",
-};
 
 
 export default function Wishlist () {
