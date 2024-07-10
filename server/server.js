@@ -6,31 +6,27 @@ const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const multer = require("multer");
 
-
-
 const app = express();
 const PORT = 11000;
 
-
 // --------------------------------------------------------- Importing models
-
 const Goods = require('./models/goods')
 
-
 // --------------------------------------------------------- MongoDB Atlas connection URI
-
 const uri = "mongodb+srv://greencrem-admin:crem_is_green100percent@cluster0.ajgpp9n.mongodb.net/database?retryWrites=true&w=majority";
 
-
 // --------------------------------------------------------- Middleware
-
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors());
 
+// CORS settings
+const corsOptions = {
+    origin: 'https://green-crem.vercel.app',
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // --------------------------------------------------------- Database connection
-
 async function connect() {
     try {  
         await mongoose.connect(uri);
@@ -42,10 +38,8 @@ async function connect() {
 
 connect();
 
-
 // --------------------------------------------------------- Routes
-
-app.get('/api/goods', async(req, res)=>{
+app.get('/api/goods', async(req, res) => {
     try {
         const goods = await Goods.find();
         res.status(200).json(goods);
@@ -54,9 +48,6 @@ app.get('/api/goods', async(req, res)=>{
         res.status(500).send('Internal Server Error');
     }
 })
-
-
-
 
 app.post('/send-order', async (req, res) => {
     const { cartItems, formData } = req.body;
@@ -98,15 +89,7 @@ app.post('/send-order', async (req, res) => {
     }
 });
 
-
-// --------------------------------------------------------- Server
-
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
-
 // --------------------------------------------------------- Multer
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "../public/uploads/");
@@ -116,13 +99,13 @@ const storage = multer.diskStorage({
         cb(null, uniqueSuffix + file.originalname);
     },
 });
-  
+
 const upload = multer({ storage: storage });
-  
+
 app.post("/upload-image", upload.single("image"), async (req, res) => {
     const { name, description, price, count, tags } = req.body;
     const imageName = req.file.filename;
-    const id = Date.now()
+    const id = Date.now();
 
     try {
         await Goods.create({
@@ -138,4 +121,9 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
     } catch (error) {
         res.json({ status: error });
     }
+});
+
+// --------------------------------------------------------- Server
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/`);
 });
