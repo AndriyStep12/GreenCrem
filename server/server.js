@@ -127,3 +127,8 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
+
+// --------------------------------------------------------- Alarm
+setInterval(() => {
+    console.log(`I'm awake, awake`)
+}, 60000*10);
