@@ -5,8 +5,6 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const multer = require("multer");
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 const PORT = 11000;
@@ -94,12 +92,7 @@ app.post('/send-order', async (req, res) => {
 // --------------------------------------------------------- Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = path.join(__dirname, "../public/uploads/");
-        
-        // Створюємо директорію, якщо вона не існує
-        fs.mkdirSync(uploadPath, { recursive: true });
-
-        cb(null, uploadPath);
+        cb(null, "../public/uploads/");
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now();
@@ -115,9 +108,6 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
     const id = Date.now();
 
     try {
-        console.log('Received image:', imageName);
-        console.log('Received form data:', { name, description, price, count, tags });
-
         await Goods.create({
             name,
             id: 'good' + id,
@@ -127,11 +117,9 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
             tags: Array.isArray(tags) ? tags : [tags],
             img: imageName
         });
-
         res.json({ status: "ok" });
     } catch (error) {
-        console.error('Error creating goods:', error);
-        res.status(500).json({ status: "error", message: error.message });
+        res.json({ status: error });
     }
 });
 
@@ -139,7 +127,6 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
-
 
 // --------------------------------------------------------- Alarm
 setInterval(() => {
