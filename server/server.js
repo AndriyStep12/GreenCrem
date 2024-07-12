@@ -5,12 +5,14 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = 11000;
 
 // --------------------------------------------------------- Importing models
-const Goods = require('./models/goods')
+const Goods = require('./models/goods');
 
 // --------------------------------------------------------- MongoDB Atlas connection URI
 const uri = "mongodb+srv://greencrem-admin:crem_is_green100percent@cluster0.ajgpp9n.mongodb.net/database?retryWrites=true&w=majority";
@@ -38,16 +40,35 @@ async function connect() {
 
 connect();
 
+// --------------------------------------------------------- Ensure upload directory exists
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// --------------------------------------------------------- Multer setup
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now();
+        cb(null, uniqueSuffix + file.originalname);
+    },
+});
+
+const upload = multer({ storage: storage });
+
 // --------------------------------------------------------- Routes
-app.get('/api/goods', async(req, res) => {
+app.get('/api/goods', async (req, res) => {
     try {
         const goods = await Goods.find();
         res.status(200).json(goods);
-    } catch(error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
-})
+});
 
 app.post('/send-order', async (req, res) => {
     const { cartItems, formData } = req.body;
@@ -89,19 +110,6 @@ app.post('/send-order', async (req, res) => {
     }
 });
 
-// --------------------------------------------------------- Multer
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "../public/uploads/");
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now();
-        cb(null, uniqueSuffix + file.originalname);
-    },
-});
-
-const upload = multer({ storage: storage });
-
 app.post("/upload-image", upload.single("image"), async (req, res) => {
     const { name, description, price, count, tags } = req.body;
     const imageName = req.file.filename;
@@ -119,7 +127,8 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
         });
         res.json({ status: "ok" });
     } catch (error) {
-        res.json({ status: error });
+        console.error('Failed to upload image:', error);
+        res.status(500).json({ status: 'Failed to upload image' });
     }
 });
 
@@ -131,4 +140,4 @@ app.listen(PORT, () => {
 // --------------------------------------------------------- Alarm
 setInterval(() => {
     console.log(`I'm awake, awake`)
-}, 60000*10);
+}, 60000 * 10);
