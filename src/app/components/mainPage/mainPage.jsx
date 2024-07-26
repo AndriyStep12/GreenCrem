@@ -33,13 +33,6 @@ const MainPage = () => {
             <div className="mainPage">
                 <Action />
                 <Categories/>
-                <div className="popularGoods">
-                    <h2>Популярні товари</h2>
-                    <div className="center">
-                        <div className="row">
-                        </div>
-                    </div>
-                </div>
             </div>
         </>
     )
