@@ -26,6 +26,10 @@
             flex-direction: row;
             justify-content: space-between;
             flex-wrap: wrap;
+            .good{
+                display: flex;
+                flex-direction: column;
+            }
         }
     }
 }

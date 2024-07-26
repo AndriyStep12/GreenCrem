@@ -1,12 +1,9 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import Cookies from 'js-cookie';
 
 const getCartItems = () => {
-  if (typeof window !== 'undefined') {
-    const items = Cookies.get('cart');
-    return items ? JSON.parse(items) : [];
-  }
-  return [];
+  const items = Cookies.get('cart');
+  return items ? JSON.parse(items) : [];
 };
 
 const useCartStore = create((set) => ({

@@ -3,27 +3,24 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const cors = require('cors');
-const { ObjectId } = require('mongodb');
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
+require('dotenv').config();
 
 const app = express();
-const PORT = 11000;
+const PORT = process.env.PORT;
 
 // --------------------------------------------------------- Importing models
 const Goods = require('./models/goods');
-
-// --------------------------------------------------------- MongoDB Atlas connection URI
-const uri = "mongodb+srv://greencrem-admin:crem_is_green100percent@cluster0.ajgpp9n.mongodb.net/database?retryWrites=true&w=majority";
 
 // --------------------------------------------------------- Middleware
 app.use(express.json());
 app.use(bodyParser.json());
 
-// CORS settings
+// --------------------------------------------------------- CORS settings
 const corsOptions = {
-    origin: 'https://green-crem.vercel.app',
+    origin: process.env.CORS_ORIGIN.split(','),
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
@@ -31,7 +28,7 @@ app.use(cors(corsOptions));
 // --------------------------------------------------------- Database connection
 async function connect() {
     try {  
-        await mongoose.connect(uri);
+        await mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true });
         console.log(`Connected to MongoDB Atlas`);
     } catch (error) {
         console.error(`Connection error: ${error}`);
@@ -41,7 +38,7 @@ async function connect() {
 connect();
 
 // --------------------------------------------------------- Ensure upload directory exists
-const uploadDir = path.join(__dirname, 'public/uploads');
+const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -53,7 +50,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now();
-        cb(null, uniqueSuffix + file.originalname);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });
 
@@ -80,14 +77,14 @@ app.post('/send-order', async (req, res) => {
         port: 465,
         secure: true,
         auth: {
-            user: 'tuningpass@gmail.com',
-            pass: 'zxyc ummd eonm slvw'
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     });
 
     try {
         await transporter.sendMail({
-            from: 'tuningpass@gmail.com',
+            from: process.env.EMAIL_USER,
             to: 'andystep2008@gmail.com',
             subject: 'New Order',
             html: `

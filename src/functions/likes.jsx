@@ -1,11 +1,8 @@
-import create from 'zustand';
+import {create} from 'zustand';
 
 const getWishlistItems = () => {
-  if (typeof window !== 'undefined') {
-    const items = localStorage.getItem('loved');
-    return items ? JSON.parse(items) : [];
-  }
-  return [];
+  const items = localStorage.getItem('loved');
+  return items ? JSON.parse(items) : [];
 };
 
 const useLikesStore = create((set) => ({
