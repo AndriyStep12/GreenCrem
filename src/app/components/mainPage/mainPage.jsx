@@ -37,7 +37,6 @@ const MainPage = () => {
                     <h2>Популярні товари</h2>
                     <div className="center">
                         <div className="row">
-                            {goods.map(item => <Good key={item} id={item.id} name={item.name} price={item.price} descrption={item.description} count={item.count} img={item.img} />)}
                         </div>
                     </div>
                 </div>
