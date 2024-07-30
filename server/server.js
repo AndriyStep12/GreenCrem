@@ -13,6 +13,7 @@ const PORT = process.env.PORT;
 
 // --------------------------------------------------------- Importing models
 const Goods = require('./models/goods');
+const Orders = require('./models/orders');
 
 // --------------------------------------------------------- Middleware
 app.use(express.json());
@@ -33,7 +34,7 @@ async function connect() {
     } catch (error) {
         console.error(`Connection error: ${error}`);
     }
-}
+};
 
 connect();
 
@@ -41,7 +42,7 @@ connect();
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
-}
+};
 
 // --------------------------------------------------------- Multer setup
 const storage = multer.diskStorage({
@@ -67,8 +68,18 @@ app.get('/api/goods', async (req, res) => {
     }
 });
 
+app.get('/api/orders', async (req, res) => {
+    try {
+        const orders = await Orders.find();
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 app.post('/send-order', async (req, res) => {
-    const { cartItems, formData } = req.body;
+    const { cartItems, formData, orderCode } = req.body;
     console.log('Received cart items:', cartItems);
     console.log('Received form data:', formData);
 
@@ -96,14 +107,33 @@ app.post('/send-order', async (req, res) => {
                 <ul>
                     ${cartItems.map(item => `<li>ID: ${item.id}, Quantity: ${item.count}</li>`).join('')}
                 </ul>
+                <p>Order Code: ${orderCode}</p>
             `
         });
+
+        // Save order to the database
+        const newOrder = new Orders({
+            pass: orderCode,
+            goods: cartItems.map(item => ({
+                name: item.name,
+                id: item.id,
+                price: item.price,
+                description: item.description || '',
+                tags: item.tags || [],
+                count: item.count,
+                img: item.img
+            }))
+        });
+
+        await newOrder.save();
+
+        res.json({ status: "ok" });
 
         console.log('Email sent successfully');
         res.status(200).send('Order received and email sent.');
     } catch (error) {
-        console.error('Failed to send email:', error);
-        res.status(500).send('Failed to send email.');
+        console.error('Failed to send email or save order:', error);
+        res.status(500).send('Failed to send email or save order.');
     }
 });
 
@@ -135,6 +165,6 @@ app.listen(PORT, () => {
 });
 
 // --------------------------------------------------------- Alarm
-setInterval(() => {
-    console.log(`I'm awake, awake`)
-}, 60000);
+// setInterval(() => {
+//     console.log(`I'm awake, awake`)
+// }, 60000);

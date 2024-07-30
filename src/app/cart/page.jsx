@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 import LeftBar from "../components/leftBar/leftBar";
 import fetchGoodsFromServer from "@/functions/array";
+import fetchOrdersFromServer from "@/functions/orders";
 import Item from "./item/item";
 import Loader from "../components/loader/loader";
 import useCartStore from "@/functions/cart";
@@ -18,6 +19,7 @@ export default function Cart() {
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
+        sename: '',
         phone: '',
         email: ''
     });
@@ -25,6 +27,8 @@ export default function Cart() {
     const [array, setArray] = useState([])
 
     const [goods, setGoods] = useState([]);
+    
+    const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchGoods = async () => {
@@ -39,13 +43,25 @@ export default function Cart() {
         fetchGoods();
     }, []);
 
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const fetchedGoods = await fetchOrdersFromServer();
+                setOrders(fetchedGoods);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        };
+
+        fetchOrders();
+    }, []);
 
     useEffect(() => {
         const updatedCartItems = cartItems.map(cartItem => {
             const foundItem = goods.find(good => good.id === cartItem.id);
             return {
                 ...cartItem,
-                price: foundItem ? foundItem.price : 0, // Додаємо ціну до кожного елемента корзини
+                price: foundItem ? foundItem.price : 0,
                 img: foundItem ? foundItem.img : '',
                 name: foundItem ? foundItem.name : ''
             };
@@ -81,13 +97,19 @@ export default function Cart() {
         setFormData({ ...formData, [name]: value });
     };
 
+    const generateOrderCode = () => {
+        return Math.random().toString(36).substr(2, 9).toUpperCase();
+    };
+
+
     const sendOrderEmail = async () => {
+        const orderCode = generateOrderCode();
         const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ cartItems, formData }),
+            body: JSON.stringify({ cartItems, formData, orderCode }),
         });
 
         Cookies.set('cart', JSON.stringify([]), { expires: 7 });
@@ -137,6 +159,9 @@ export default function Cart() {
                                 <h2>Оформлення замовлення</h2>
                                 <label>
                                     <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} />
+                                </label>
+                                <label>
+                                    <input type="text" name="sename" placeholder="Прізвище" value={formData.sename} onChange={handleInputChange} />
                                 </label>
                                 <label>
                                     <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} />
