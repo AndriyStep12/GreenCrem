@@ -10,7 +10,6 @@ import useCartStore from "@/functions/cart";
 import Head from "next/head";
 import './cart.scss';
 
-
 export default function Cart() {
     const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
     const [totalPrice, setTotalPrice] = useState(0);
@@ -24,35 +23,57 @@ export default function Cart() {
         email: ''
     });
 
-    const [array, setArray] = useState([])
-
     const [goods, setGoods] = useState([]);
-    
     const [orders, setOrders] = useState([]);
 
-    useEffect(() => {
-        const fetchGoods = async () => {
-            try {
-                const fetchedGoods = await fetchGoodsFromServer();
-                setGoods(fetchedGoods);
-            } catch (error) {
-                console.error('Error fetching goods:', error);
-            }
-        };
+    useEffect(()=>{
+        console.log(cartItems)
+    }, [cartItems])
 
+    const fetchGoods = async () => {
+        try {
+            const fetchedGoods = await fetchGoodsFromServer();
+            setGoods(fetchedGoods);
+            updateCartWithGoodsDetails(fetchedGoods); // Оновлюємо кукіси з даними про товари
+        } catch (error) {
+            console.error('Error fetching goods:', error);
+        }
+    };
+
+    const fetchOrders = async () => {
+        try {
+            const fetchedOrders = await fetchOrdersFromServer();
+            setOrders(fetchedOrders);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
+
+    const updateCartWithGoodsDetails = (fetchedGoods) => {
+        const savedCart = JSON.parse(Cookies.get('cart') || '[]');
+        const updatedCart = savedCart.map(cartItem => {
+            const foundItem = fetchedGoods.find(good => good.id === cartItem.id);
+            if (foundItem) {
+                const { count, ...itemDetails } = foundItem; // Видаляємо count
+                return {
+                    ...cartItem,
+                    ...itemDetails,
+                    price: itemDetails.price || cartItem.price,
+                    img: itemDetails.img || cartItem.img,
+                    name: itemDetails.name || cartItem.name,
+                    description: itemDetails.description || cartItem.description,
+                    tags: itemDetails.tags || cartItem.tags
+                };
+            }
+            return cartItem;
+        });
+
+        Cookies.set('cart', JSON.stringify(updatedCart), { expires: 7 });
+        setCartItems(updatedCart);
+    };
+
+    useEffect(() => {
         fetchGoods();
-    }, []);
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const fetchedGoods = await fetchOrdersFromServer();
-                setOrders(fetchedGoods);
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        };
-
         fetchOrders();
     }, []);
 
@@ -63,13 +84,14 @@ export default function Cart() {
                 ...cartItem,
                 price: foundItem ? foundItem.price : 0,
                 img: foundItem ? foundItem.img : '',
-                name: foundItem ? foundItem.name : ''
+                name: foundItem ? foundItem.name : '',
+                description: foundItem ? foundItem.description : '',
+                tags: foundItem ? foundItem.tags : []
             };
         });
 
         const total = updatedCartItems.reduce((sum, item) => sum + (item.price * item.count), 0);
         setTotalPrice(total);
-        
     }, [goods, cartItems]);
 
     useEffect(() => {
@@ -77,7 +99,6 @@ export default function Cart() {
         setCartItems(savedCart);
         setLoading(false);
     }, []);
-
 
     const calculateTotalPrice = () => {
         const total = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
@@ -89,7 +110,7 @@ export default function Cart() {
         setCartItems(updatedCart);
         Cookies.set('cart', JSON.stringify(updatedCart), { expires: 7 });
         calculateTotalPrice();
-        cartsDecrement()
+        cartsDecrement();
     };
 
     const handleInputChange = (e) => {
@@ -100,7 +121,6 @@ export default function Cart() {
     const generateOrderCode = () => {
         return Math.random().toString(36).substr(2, 9).toUpperCase();
     };
-
 
     const sendOrderEmail = async () => {
         const orderCode = generateOrderCode();
@@ -117,7 +137,7 @@ export default function Cart() {
         setTotalPrice(0);
         alert('Замовлення відправлено!');
         setShowPopup(false);
-        cartsZero()
+        cartsZero();
     };
 
     useEffect(() => {
@@ -132,7 +152,7 @@ export default function Cart() {
         <>
             <div className="cart">
                 <LeftBar />
-                {loading ? <Loader/> :
+                {loading ? <Loader /> :
                     <div className="content">
                         <h2>Корзина</h2>
                         <div className="row">
