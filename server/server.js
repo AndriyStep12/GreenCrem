@@ -86,11 +86,7 @@ app.get('/api/orders', async (req, res) => {
 });
 
 app.post('/send-order', async (req, res) => {
-    const {
-        cartItems,
-        formData,
-        orderCode
-    } = req.body;
+    const { cartItems, formData, orderCode } = req.body;
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
     console.log('Received cart items:', cartItems);
     console.log('Received form data:', formData);
@@ -125,14 +121,12 @@ app.post('/send-order', async (req, res) => {
     Кількість: ${item.count}
     Ціна за одиницю: ${item.price}
     Загальна ціна: ${item.price * item.count}
-    `).join('\n')}
+    `).join('')}
     `;
 
-    bot.sendMessage(1015683844, messageForTelegram, {
-        parse_mode: 'Markdown'
-    });
-
     try {
+        await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
+
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: 'andystep2008@gmail.com',
@@ -222,12 +216,8 @@ app.post('/send-order', async (req, res) => {
 
         await newOrder.save();
 
-        res.json({
-            status: "ok"
-        });
-
+        res.json({ status: "ok" });
         console.log('Email sent successfully');
-        res.status(200).send('Order received and email sent.');
     } catch (error) {
         console.error('Failed to send email or save order:', error);
         res.status(500).send('Failed to send email or save order.');
