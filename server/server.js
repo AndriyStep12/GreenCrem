@@ -80,6 +80,7 @@ app.get('/api/orders', async (req, res) => {
 
 app.post('/send-order', async (req, res) => {
     const { cartItems, formData, orderCode } = req.body;
+    const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
     console.log('Received cart items:', cartItems);
     console.log('Received form data:', formData);
 
