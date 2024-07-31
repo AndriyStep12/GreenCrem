@@ -97,23 +97,40 @@ app.post('/send-order', async (req, res) => {
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: 'andystep2008@gmail.com',
-            subject: 'New Order',
+            subject: 'Нове замовлення',
             html: `
-                <h3>Customer Information</h3>
-                <p>Name: ${formData.name}</p>
-                <p>Phone: ${formData.phone}</p>
-                <p>Email: ${formData.email}</p>
-                <h3>Order Details</h3>
-                <ul>
-                    ${cartItems.map(item => `<li>ID: ${item.id}, Quantity: ${item.count}</li>`).join('')}
-                </ul>
-                <p>Order Code: ${orderCode}</p>
+                <div>
+                    <h3>Інформація про покупця</h3>
+                    <p>Ім'я: ${formData.name}</p>
+                    <p>Прізвище: ${formData.sename}</p>
+                    <p>Номер телефону: ${formData.phone}</p>
+                    <p>Емейл: ${formData.email}</p>
+                    <h3>Інформація про замовлення</h3>
+                    <p>Код замовлення: ${orderCode}</p>
+                    <ul>
+                        ${cartItems.map(item => `
+                            <li>
+                                <p>Назва товару: ${item.name}</p>
+                                <p>ID: ${item.id}</p>
+                                <p>Кількість: ${item.count}</p>
+                                <p>Ціна за одиницю: ${item.price}</p>
+                                <p>Загальна ціна: ${item.price*item.count}</p>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p>Загальна вартість замовлення: ${totalPrice}$</p>
+                </div>
             `
         });
+        
 
-        // Save order to the database
+        const client = `${formData.name} ${formData.sename}`
+
         const newOrder = new Orders({
             pass: orderCode,
+            client: client,
+            phone: formData.phone,
+            email: formData.email,
             goods: cartItems.map(item => ({
                 name: item.name,
                 id: item.id,
