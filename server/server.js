@@ -256,6 +256,11 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_API;
 const bot = new TelegramBot(token, { polling: true });
 
+bot.onText(/\/myID/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `Your chat id - ${chatId}`);
+});
+
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     if (msg.text === '/myID') {
@@ -266,16 +271,38 @@ bot.on('message', async (msg) => {
             try {
                 const order = await Orders.findOne({ pass: orderCode });
                 if (order) {
-                    bot.sendMessage(chatId, `Order found: ${JSON.stringify(order, null, 2)}`);
+                    const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+
+                    const messageForTelegram = `
+🛒 *Знайдене замовлення*
+*Інформація про покупця:*
+Ім'я: ${order.client}
+Номер телефону: ${order.phone}
+Емейл: ${order.email}
+
+*Інформація про замовлення:*
+Код замовлення: ${order.pass}
+Загальна вартість замовлення: ${totalPrice}$
+Товари:
+${order.goods.map(item => `
+Назва товару: ${item.name}
+ID: ${item.id}
+Кількість: ${item.count}
+Ціна за одиницю: ${item.price}
+Загальна ціна: ${item.price * item.count}
+`).join('')}
+                    `;
+
+                    bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'Markdown' });
                 } else {
-                    bot.sendMessage(chatId, 'Order not found');
+                    bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
                 }
             } catch (error) {
                 console.error('Failed to find order:', error);
-                bot.sendMessage(chatId, 'Internal Server Error');
+                bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
             }
         } else {
-            bot.sendMessage(chatId, 'Please provide an order code after /find command');
+            bot.sendMessage(chatId, 'Будь ласка, вкажіть код замовлення після команди /find');
         }
     }
 });
