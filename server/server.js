@@ -105,6 +105,7 @@ app.post('/send-order', async (req, res) => {
         }
     });
 
+    bot.sendMessage(1015683844, `New Order`);
 
     try {
         await transporter.sendMail({
@@ -251,3 +252,17 @@ app.listen(PORT, () => {
 // setInterval(() => {
 //     console.log(`I'm awake, awake`)
 // }, 60000);
+
+// --------------------------------------------------------- Telegram Bot
+const TelegramBot = require('node-telegram-bot-api');
+const token = process.env.BOT_API;
+const bot = new TelegramBot(token, {polling: true});
+
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  if(msg.text == '/myID'){
+    bot.sendMessage(chatId, `Your chat id - ${chatId}`);
+  } else{
+    bot.sendMessage(chatId, `Blud said ${msg.text} fr 💀💀💀`);
+  }
+});
