@@ -6,10 +6,12 @@ const cors = require('cors');
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
+const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT;
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 
 // --------------------------------------------------------- Importing models
 const Goods = require('./models/goods');
@@ -172,7 +174,7 @@ ID: ${item.id}
                     РНОКПП/ЄДРПОУ 
                     3648604682  
                     Призначення платежу: Оплата за товар ( № ${orderCode} )
-                    Отримувач - ФОП АБДІЄВА ЛІЛІЯ-АННА АНДРІЇВНА
+                    Отримувач - ФОП АБДІЄВА ЛІЛІЯ-АННА АНДРіїЇВНА
                     <br>
                     Для підтвердження замовлення та оплати, будь ласка, відправте НОМЕР ЗАМОВЛЕННЯ та скрін/чек оплати нам у мессенджери нижче, або в директ інстаграм:
                     <br>
@@ -207,48 +209,24 @@ ID: ${item.id}
                 name: item.name,
                 id: item.id,
                 price: item.price,
-                description: item.description || '',
-                tags: item.tags || [],
                 count: item.count,
-                img: item.img
-            }))
+                totalPrice: item.price * item.count
+            })),
+            status: 'Pending',
         });
-
         await newOrder.save();
 
-        res.json({ status: "ok" });
-        console.log('Order received and emails sent successfully');
-    } catch (error) {
-        console.error('Failed to send email or save order:', error);
-        res.status(500).send('Failed to send email or save order.');
-    }
-});
-
-app.post("/upload-image", upload.single("image"), async (req, res) => {
-    const { name, description, price, count, tags } = req.body;
-    const imageName = req.file.filename;
-    const id = Date.now();
-
-    try {
-        await Goods.create({
-            name,
-            id: 'good' + id,
-            description,
-            price,
-            count,
-            tags: Array.isArray(tags) ? tags : [tags],
-            img: imageName
+        res.status(200).json({
+            message: 'Order placed successfully and emails sent'
         });
-        res.json({ status: "ok" });
     } catch (error) {
-        console.error('Failed to upload image:', error);
-        res.status(500).json({ status: 'Failed to upload image' });
+        console.error('Error sending order:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
-// --------------------------------------------------------- Server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
+    console.log(`Server is running on port ${PORT}`);
 });
 
 // --------------------------------------------------------- Telegram Bot

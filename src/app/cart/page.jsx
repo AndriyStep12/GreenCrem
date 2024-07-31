@@ -17,6 +17,7 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [orderSent, setOrderSent] = useState(false);
+    const [order, setOrder] = useState('')
     const [formData, setFormData] = useState({
         name: '',
         sename: '',
@@ -125,6 +126,7 @@ export default function Cart() {
 
     const sendOrderEmail = async () => {
         const orderCode = generateOrderCode();
+        setOrder(orderCode)
         const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
@@ -200,7 +202,7 @@ export default function Cart() {
                 {orderSent && (
                 <div className="overlayOrder">
                     <div className="order-confirmation">
-                        <p>Ваше замовлення було успішно відправлено. Будь ласка, перевірте свій email для подальшої інформації.</p>
+                        <div>Ваше замовлення було успішно відправлено.<br />Будь ласка, перевірте свій email для подальшої інформації.<br />Код вашого замовлення {order}.<br />Перевірити своє замовлення ви можете у телеграм боті <a href="https://t.me/greencrem_bot">greencrem_bot</a> (напишіть команду /find *код замовлення*)</div>
                         <div className="end">
                             <button onClick={() => setOrderSent(false)}>Закрити</button>
                         </div>
