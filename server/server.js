@@ -28,8 +28,11 @@ app.use(cors(corsOptions));
 
 // --------------------------------------------------------- Database connection
 async function connect() {
-    try {  
-        await mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true });
+    try {
+        await mongoose.connect(process.env.DB_CONNECTION, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
         console.log(`Connected to MongoDB Atlas`);
     } catch (error) {
         console.error(`Connection error: ${error}`);
@@ -41,7 +44,9 @@ connect();
 // --------------------------------------------------------- Ensure upload directory exists
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+    fs.mkdirSync(uploadDir, {
+        recursive: true
+    });
 };
 
 // --------------------------------------------------------- Multer setup
@@ -55,7 +60,9 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage
+});
 
 // --------------------------------------------------------- Routes
 app.get('/api/goods', async (req, res) => {
@@ -79,7 +86,11 @@ app.get('/api/orders', async (req, res) => {
 });
 
 app.post('/send-order', async (req, res) => {
-    const { cartItems, formData, orderCode } = req.body;
+    const {
+        cartItems,
+        formData,
+        orderCode
+    } = req.body;
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
     console.log('Received cart items:', cartItems);
     console.log('Received form data:', formData);
@@ -93,6 +104,13 @@ app.post('/send-order', async (req, res) => {
             pass: process.env.EMAIL_PASS
         }
     });
+
+    function idPhoto(str) {
+        const numStr = str.replace("good", "");
+        const num = Number(numStr);
+        const result = num - 2;
+        return result
+    }
 
     try {
         await transporter.sendMail({
@@ -115,7 +133,8 @@ app.post('/send-order', async (req, res) => {
                                 <p>ID: ${item.id}</p>
                                 <p>Кількість: ${item.count}</p>
                                 <p>Ціна за одиницю: ${item.price}</p>
-                                <p>Загальна ціна: ${item.price*item.count}</p>
+                                <p>Загальна ціна: ${item.price * item.count}</p>
+                                <img src="https://green-crem.vercel.app/_next/image?url=%2Fuploads%2F${idPhoto(item.id)}.jpg&w=3840&q=75" alt="${item.name}" style="max-width: 100px;"/>
                             </li>
                         `).join('')}
                     </ul>
@@ -123,9 +142,8 @@ app.post('/send-order', async (req, res) => {
                 </div>
             `
         });
-        
 
-        const client = `${formData.name} ${formData.sename}`
+        const client = `${formData.name} ${formData.sename}`;
 
         const newOrder = new Orders({
             pass: orderCode,
@@ -145,7 +163,9 @@ app.post('/send-order', async (req, res) => {
 
         await newOrder.save();
 
-        res.json({ status: "ok" });
+        res.json({
+            status: "ok"
+        });
 
         console.log('Email sent successfully');
         res.status(200).send('Order received and email sent.');
@@ -156,7 +176,13 @@ app.post('/send-order', async (req, res) => {
 });
 
 app.post("/upload-image", upload.single("image"), async (req, res) => {
-    const { name, description, price, count, tags } = req.body;
+    const {
+        name,
+        description,
+        price,
+        count,
+        tags
+    } = req.body;
     const imageName = req.file.filename;
     const id = Date.now();
 
@@ -170,10 +196,14 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
             tags: Array.isArray(tags) ? tags : [tags],
             img: imageName
         });
-        res.json({ status: "ok" });
+        res.json({
+            status: "ok"
+        });
     } catch (error) {
         console.error('Failed to upload image:', error);
-        res.status(500).json({ status: 'Failed to upload image' });
+        res.status(500).json({
+            status: 'Failed to upload image'
+        });
     }
 });
 
