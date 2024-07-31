@@ -6,12 +6,10 @@ const cors = require('cors');
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT;
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 
 // --------------------------------------------------------- Importing models
 const Goods = require('./models/goods');
