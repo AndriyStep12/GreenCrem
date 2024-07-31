@@ -16,6 +16,7 @@ export default function Cart() {
     const [loading, setLoading] = useState(true);
     const [cartItems, setCartItems] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const [orderSent, setOrderSent] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
         sename: '',
@@ -135,13 +136,13 @@ export default function Cart() {
         Cookies.set('cart', JSON.stringify([]), { expires: 7 });
         setCartItems([]);
         setTotalPrice(0);
-        alert('Замовлення відправлено!');
+        setOrderSent(true); // Встановлюємо стан для відображення сповіщення
         setShowPopup(false);
         cartsZero();
     };
 
     useEffect(() => {
-        if (showPopup){
+        if (showPopup || orderSent){
             document.body.style.overflowY = "hidden";
         } else{
             document.body.style.overflowY = "auto";
@@ -196,6 +197,16 @@ export default function Cart() {
                         </div>
                     </>
                 )}
+                {orderSent && (
+                <div className="overlay">
+                    <div className="order-confirmation">
+                        <p>Ваше замовлення було успішно відправлено. Будь ласка, перевірте свій email для подальшої інформації.</p>
+                        <div className="end">
+                            <button onClick={() => setOrderSent(false)}>Закрити</button>
+                        </div>
+                    </div>
+                </div>
+            )}
             </div>
         </>
     );
