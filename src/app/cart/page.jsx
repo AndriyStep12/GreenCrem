@@ -16,7 +16,7 @@ export default function Cart() {
     const [loading, setLoading] = useState(true);
     const [cartItems, setCartItems] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
-    const [orderSent, setOrderSent] = useState(true);
+    const [orderSent, setOrderSent] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         sename: '',
