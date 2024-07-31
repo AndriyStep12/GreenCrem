@@ -198,7 +198,7 @@ export default function Cart() {
                     </>
                 )}
                 {orderSent && (
-                <div className="overlay">
+                <div className="overlayOrder">
                     <div className="order-confirmation">
                         <p>Ваше замовлення було успішно відправлено. Будь ласка, перевірте свій email для подальшої інформації.</p>
                         <div className="end">
