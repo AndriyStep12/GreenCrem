@@ -105,7 +105,32 @@ app.post('/send-order', async (req, res) => {
         }
     });
 
-    bot.sendMessage(1015683844, `New Order`);
+    const client = `${formData.name} ${formData.sename}`;
+
+    const messageForTelegram = `
+    🛒 *Нове замовлення*
+    *Інформація про покупця:*
+    Ім'я: ${formData.name}
+    Прізвище: ${formData.sename}
+    Номер телефону: ${formData.phone}
+    Емейл: ${formData.email}
+    
+    *Інформація про замовлення:*
+    Код замовлення: ${orderCode}
+    Загальна вартість замовлення: ${totalPrice}$
+    Товари:
+    ${cartItems.map(item => `
+    Назва товару: ${item.name}
+    ID: ${item.id}
+    Кількість: ${item.count}
+    Ціна за одиницю: ${item.price}
+    Загальна ціна: ${item.price * item.count}
+    `).join('\n')}
+    `;
+
+    bot.sendMessage(1015683844, messageForTelegram, {
+        parse_mode: 'Markdown'
+    });
 
     try {
         await transporter.sendMail({
@@ -178,8 +203,6 @@ app.post('/send-order', async (req, res) => {
                 </div>
             `
         });
-
-        const client = `${formData.name} ${formData.sename}`;
 
         const newOrder = new Orders({
             pass: orderCode,
@@ -256,13 +279,15 @@ app.listen(PORT, () => {
 // --------------------------------------------------------- Telegram Bot
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_API;
-const bot = new TelegramBot(token, {polling: true});
+const bot = new TelegramBot(token, {
+    polling: true
+});
 
 bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  if(msg.text == '/myID'){
-    bot.sendMessage(chatId, `Your chat id - ${chatId}`);
-  } else{
-    bot.sendMessage(chatId, `Blud said ${msg.text} fr 💀💀💀`);
-  }
+    const chatId = msg.chat.id;
+    if (msg.text == '/myID') {
+        bot.sendMessage(chatId, `Your chat id - ${chatId}`);
+    } else {
+        bot.sendMessage(chatId, `Blud said ${msg.text} fr 💀💀💀`);
+    }
 });
