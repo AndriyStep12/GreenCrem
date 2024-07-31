@@ -128,7 +128,7 @@ app.post('/send-order', async (req, res) => {
                                 <p>Кількість: ${item.count}</p>
                                 <p>Ціна за одиницю: ${item.price}</p>
                                 <p>Загальна ціна: ${item.price * item.count}</p>
-                                <a src="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
+                                <a href="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
                             </li>
                         `).join('')}
                     </ul>
