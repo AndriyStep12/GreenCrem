@@ -104,25 +104,25 @@ app.post('/send-order', async (req, res) => {
     const client = `${formData.name} ${formData.sename}`;
 
     const messageForTelegram = `
-    🛒 *Нове замовлення*
-    *Інформація про покупця:*
-    Ім'я: ${formData.name}
-    Прізвище: ${formData.sename}
-    Номер телефону: ${formData.phone}
-    Емейл: ${formData.email}
-    
-    *Інформація про замовлення:*
-    Код замовлення: ${orderCode}
-    Загальна вартість замовлення: ${totalPrice}$
-    Товари:
-    ${cartItems.map(item => `
-    Назва товару: ${item.name}
-    ID: ${item.id}
-    Кількість: ${item.count}
-    Ціна за одиницю: ${item.price}
-    Загальна ціна: ${item.price * item.count}
-    `).join('')}
-    `;
+🛒 *Нове замовлення*
+*Інформація про покупця:*
+Ім'я: ${formData.name}
+Прізвище: ${formData.sename}
+Номер телефону: ${formData.phone}
+Емейл: ${formData.email}
+
+*Інформація про замовлення:*
+Код замовлення: ${orderCode}
+Загальна вартість замовлення: ${totalPrice}$
+Товари:
+${cartItems.map(item => `
+Назва товару: ${item.name}
+ID: ${item.id}
+Кількість: ${item.count}
+Ціна за одиницю: ${item.price}
+Загальна ціна: ${item.price * item.count}
+`).join('')}
+`;
 
     try {
         await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
@@ -217,7 +217,7 @@ app.post('/send-order', async (req, res) => {
         await newOrder.save();
 
         res.json({ status: "ok" });
-        console.log('Email sent successfully');
+        console.log('Order received and emails sent successfully');
     } catch (error) {
         console.error('Failed to send email or save order:', error);
         res.status(500).send('Failed to send email or save order.');
@@ -225,13 +225,7 @@ app.post('/send-order', async (req, res) => {
 });
 
 app.post("/upload-image", upload.single("image"), async (req, res) => {
-    const {
-        name,
-        description,
-        price,
-        count,
-        tags
-    } = req.body;
+    const { name, description, price, count, tags } = req.body;
     const imageName = req.file.filename;
     const id = Date.now();
 
@@ -245,14 +239,10 @@ app.post("/upload-image", upload.single("image"), async (req, res) => {
             tags: Array.isArray(tags) ? tags : [tags],
             img: imageName
         });
-        res.json({
-            status: "ok"
-        });
+        res.json({ status: "ok" });
     } catch (error) {
         console.error('Failed to upload image:', error);
-        res.status(500).json({
-            status: 'Failed to upload image'
-        });
+        res.status(500).json({ status: 'Failed to upload image' });
     }
 });
 
@@ -261,23 +251,31 @@ app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
 
-// --------------------------------------------------------- Alarm
-// setInterval(() => {
-//     console.log(`I'm awake, awake`)
-// }, 60000);
-
 // --------------------------------------------------------- Telegram Bot
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_API;
-const bot = new TelegramBot(token, {
-    polling: true
-});
+const bot = new TelegramBot(token, { polling: true });
 
-bot.on('message', (msg) => {
+bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-    if (msg.text == '/myID') {
+    if (msg.text === '/myID') {
         bot.sendMessage(chatId, `Your chat id - ${chatId}`);
-    } else {
-        bot.sendMessage(chatId, `Blud said ${msg.text} fr 💀💀💀`);
+    } else if (msg.text.startsWith('/find')) {
+        const orderCode = msg.text.split(' ')[1];
+        if (orderCode) {
+            try {
+                const order = await Orders.findOne({ pass: orderCode });
+                if (order) {
+                    bot.sendMessage(chatId, `Order found: ${JSON.stringify(order, null, 2)}`);
+                } else {
+                    bot.sendMessage(chatId, 'Order not found');
+                }
+            } catch (error) {
+                console.error('Failed to find order:', error);
+                bot.sendMessage(chatId, 'Internal Server Error');
+            }
+        } else {
+            bot.sendMessage(chatId, 'Please provide an order code after /find command');
+        }
     }
 });
