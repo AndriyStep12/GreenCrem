@@ -103,21 +103,31 @@ app.post('/send-order', async (req, res) => {
 
     const client = `${formData.name} ${formData.sename}`;
 
+    // Function to escape special characters in Markdown
+    const escapeMarkdown = (text) => {
+        return text.replace(/_/g, '\\_')
+                   .replace(/\*/g, '\\*')
+                   .replace(/\[/g, '\\[')
+                   .replace(/`/g, '\\`')
+                   .replace(/>/g, '\\>')
+                   .replace(/-/g, '\\-');
+    };
+
     const messageForTelegram = `
 🛒 *Нове замовлення*
 *Інформація про покупця:*
-Ім'я: ${formData.name}
-Прізвище: ${formData.sename}
-Номер телефону: ${formData.phone}
-Емейл: ${formData.email}
+Ім'я: ${escapeMarkdown(formData.name)}
+Прізвище: ${escapeMarkdown(formData.sename)}
+Номер телефону: ${escapeMarkdown(formData.phone)}
+Емейл: ${escapeMarkdown(formData.email)}
 
 *Інформація про замовлення:*
-Код замовлення: ${orderCode}
+Код замовлення: ${escapeMarkdown(orderCode)}
 Загальна вартість замовлення: ${totalPrice}$
 Товари:
 ${cartItems.map(item => `
-Назва товару: ${item.name}
-ID: ${item.id}
+Назва товару: ${escapeMarkdown(item.name)}
+ID: ${escapeMarkdown(item.id)}
 Кількість: ${item.count}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
@@ -125,8 +135,10 @@ ID: ${item.id}
 `;
 
     try {
+        // Send message to Telegram
         await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
 
+        // Send order confirmation email to admin
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: 'andystep2008@gmail.com',
@@ -157,6 +169,7 @@ ID: ${item.id}
             `
         });
 
+        // Send order confirmation email to client
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: formData.email,
@@ -198,6 +211,7 @@ ID: ${item.id}
             `
         });
 
+        // Save the order in the database
         const newOrder = new Orders({
             pass: orderCode,
             client: client,
