@@ -134,7 +134,7 @@ app.post('/send-order', async (req, res) => {
                                 <p>Кількість: ${item.count}</p>
                                 <p>Ціна за одиницю: ${item.price}</p>
                                 <p>Загальна ціна: ${item.price * item.count}</p>
-                                <img src="https://green-crem.vercel.app/_next/image?url=%2Fuploads%2F${idPhoto(item.id)}.jpg&w=3840&q=75" alt="${item.name}" style="max-width: 100px;"/>
+                                <img src="https://green-crem.vercel.app/_next/image?url=%2Fuploads%2F${idPhoto(item.id)}.jpg&w=3840&q=75" alt="${item.name}" style="max-width: 300px;"/>
                             </li>
                         `).join('')}
                     </ul>
