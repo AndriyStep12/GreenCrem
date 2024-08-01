@@ -138,18 +138,26 @@ export default function Cart() {
         Cookies.set('cart', JSON.stringify([]), { expires: 7 });
         setCartItems([]);
         setTotalPrice(0);
-        setOrderSent(true); // Встановлюємо стан для відображення сповіщення
+        setOrderSent(true);
         setShowPopup(false);
         cartsZero();
     };
 
     useEffect(() => {
-        if (showPopup || orderSent){
+        if (showPopup || orderSent || cartItems.length === 0) {
             document.body.style.overflowY = "hidden";
-        } else{
+            if (orderSent) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } else {
             document.body.style.overflowY = "auto";
         }
-    }, [showPopup]);
+    }, [showPopup, orderSent, cartItems]);
+
+    const closeOrderConfirmation = () => {
+        setOrderSent(false);
+        document.body.style.overflowY = "auto";
+    };
 
     return (
         <>
@@ -202,9 +210,16 @@ export default function Cart() {
                 {orderSent && (
                 <div className="overlayOrder">
                     <div className="order-confirmation">
-                        <div>Ваше замовлення було успішно відправлено.<br />Будь ласка, перевірте свій email для подальшої інформації.<br />Код вашого замовлення {order}.<br />Перевірити своє замовлення ви можете у телеграм боті <a href="https://t.me/greencrem_bot">greencrem_bot</a> (напишіть команду /find *код замовлення*)</div>
+                        <div>
+                            <ul>
+                                <li>Ваше замовлення було успішно відправлено.</li>
+                                <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
+                                <li>Код вашого замовлення <b>{order}</b>.</li>
+                                <li>Перевірити своє замовлення ви можете у телеграм боті <a href="https://t.me/greencrem_bot">greencrem_bot</a> (напишіть команду /find *код замовлення*)</li>
+                            </ul>
+                        </div>
                         <div className="end">
-                            <button onClick={() => setOrderSent(false)}>Закрити</button>
+                            <button onClick={closeOrderConfirmation}>Закрити</button>
                         </div>
                     </div>
                 </div>
