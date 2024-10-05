@@ -4,7 +4,6 @@ import LeftBar from "@/app/components/leftBar/leftBar";
 import Loader from "@/app/components/loader/loader";
 import fetchGoodsFromServer from "@/functions/array";
 import Good from "@/app/components/good/good";
-import Head from "next/head";
 import './searcher.scss';
 
 export default function Searching({ params: { id } }) {
@@ -12,11 +11,7 @@ export default function Searching({ params: { id } }) {
     const [goods, setGoods] = useState([]);
     const [filteredGoods, setFilteredGoods] = useState([]);
 
-    const decodeId = (encodedId) => {
-        return encodedId.replace(/%20/g, ' ');
-    };
-
-    const decodedId = decodeId(id);
+    const decodedId = decodeURIComponent(id);
 
     const searchGoods = (goods, searchTerm) => {
         return goods.filter(good => 
@@ -43,34 +38,32 @@ export default function Searching({ params: { id } }) {
     }, [decodedId]);
 
     return (
-        <>
-            <div className="searcher">
-                <LeftBar />
-                <div className="content">
-                    <h2>Пошук {decodedId}</h2>
-                    {loading ? (
-                        <Loader />
-                    ) : (
-                        <div className="row">
-                            {filteredGoods.length > 0 ? (
-                                filteredGoods.map(item => (
-                                    <Good 
-                                        key={item.id} 
-                                        id={item.id} 
-                                        name={item.name} 
-                                        price={item.price} 
-                                        description={item.description} 
-                                        count={item.count} 
-                                        img={item.img} 
-                                    />
-                                ))
-                            ) : (
-                                <p>Не знайдено "{decodedId}"</p>
-                            )}
-                        </div>
-                    )}
-                </div>
+        <div className="searcher">
+            <LeftBar />
+            <div className="content">
+                <h2>Пошук {decodedId}</h2>
+                {loading ? (
+                    <Loader />
+                ) : (
+                    <div className="row">
+                        {filteredGoods.length > 0 ? (
+                            filteredGoods.map(item => (
+                                <Good 
+                                    key={item.id} 
+                                    id={item.id} 
+                                    name={item.name} 
+                                    price={item.price} 
+                                    description={item.description} 
+                                    count={item.count} 
+                                    img={item.img} 
+                                />
+                            ))
+                        ) : (
+                            <p>Не знайдено "{decodedId}"</p>
+                        )}
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
 }
