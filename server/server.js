@@ -1,12 +1,11 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const cors = require('cors');
-const multer = require('multer');
+const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
 
 const app = express();
@@ -38,23 +37,32 @@ async function connect() {
     } catch (error) {
         console.error(`Connection error: ${error}`);
     }
-}
+};
 
 connect();
 
 // --------------------------------------------------------- Ensure upload directory exists
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+    fs.mkdirSync(uploadDir, {
+        recursive: true
+    });
+};
 
 // --------------------------------------------------------- Multer setup
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadDir),
-    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now();
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+    storage: storage
+});
 
 // --------------------------------------------------------- Routes
 app.get('/api/goods', async (req, res) => {
@@ -77,77 +85,11 @@ app.get('/api/orders', async (req, res) => {
     }
 });
 
-// --------------------------------------------------------- Order sending function
-const sendOrderEmail = async (transporter, orderDetails) => {
-    const { formData, cartItems, orderCode, totalPrice } = orderDetails;
-
-    // Admin email
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: 'andystep2008@gmail.com',
-        subject: 'Нове замовлення',
-        html: `
-            <div>
-                <h3>Інформація про покупця</h3>
-                <p>Ім'я: ${formData.name}</p>
-                <p>Прізвище: ${formData.sename}</p>
-                <p>Номер телефону: ${formData.phone}</p>
-                <p>Емейл: ${formData.email}</p>
-                <h3>Інформація про замовлення</h3>
-                <p>Код замовлення: ${orderCode}</p>
-                <ul>
-                    ${cartItems.map(item => `
-                        <li>
-                            <p>Назва товару: ${item.name}</p>
-                            <p>ID: ${item.id}</p>
-                            <p>Кількість: ${item.count}</p>
-                            <p>Ціна за одиницю: ${item.price}</p>
-                            <p>Загальна ціна: ${item.price * item.count}</p>
-                            <a href="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
-                        </li>
-                    `).join('')}
-                </ul>
-                <p>Загальна вартість замовлення: ${totalPrice}$</p>
-            </div>
-        `
-    });
-
-    // Client email
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: formData.email,
-        subject: 'Підтвердіть ваше замовлення',
-        html: `
-            <div>
-                <h3>Доброго дня</h3>
-                <p>Цей спосіб оплати передбачає часткову передплату на карту - у сумі 500 грн</p>
-                <p>Реквізити для оплати: UA403052990000026004011032613</p>
-                <p>Призначення платежу: Оплата за товар ( № ${orderCode} )</p>
-                <p>Отримувач - ФОП АБДІЄВА ЛІЛІЯ-АННА АНДРіїЇВНА</p>
-                <h3>Інформація про ваше замовлення</h3>
-                <p>Код замовлення: ${orderCode}</p>
-                <ul>
-                    ${cartItems.map(item => `
-                        <li>
-                            <p>Назва товару: ${item.name}</p>
-                            <p>ID: ${item.id}</p>
-                            <p>Кількість: ${item.count}</p>
-                            <p>Ціна за одиницю: ${item.price}</p>
-                            <p>Загальна ціна: ${item.price * item.count}</p>
-                            <a href="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
-                        </li>
-                    `).join('')}
-                </ul>
-                <p>Загальна вартість замовлення: ${totalPrice}$</p>
-            </div>
-        `
-    });
-};
-
-// --------------------------------------------------------- Send Order Route
 app.post('/send-order', async (req, res) => {
     const { cartItems, formData, orderCode } = req.body;
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+    console.log('Received cart items:', cartItems);
+    console.log('Received form data:', formData);
 
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -161,21 +103,31 @@ app.post('/send-order', async (req, res) => {
 
     const client = `${formData.name} ${formData.sename}`;
 
+    // Function to escape special characters in Markdown
+    const escapeMarkdown = (text) => {
+        return text.replace(/_/g, '\\_')
+                   .replace(/\*/g, '\\*')
+                   .replace(/\[/g, '\\[')
+                   .replace(/`/g, '\\`')
+                   .replace(/>/g, '\\>')
+                   .replace(/-/g, '\\-');
+    };
+
     const messageForTelegram = `
 🛒 *Нове замовлення*
 *Інформація про покупця:*
-Ім'я: ${formData.name}
-Прізвище: ${formData.sename}
-Номер телефону: ${formData.phone}
-Емейл: ${formData.email}
+Ім'я: ${escapeMarkdown(formData.name)}
+Прізвище: ${escapeMarkdown(formData.sename)}
+Номер телефону: ${escapeMarkdown(formData.phone)}
+Емейл: ${escapeMarkdown(formData.email)}
 
 *Інформація про замовлення:*
-Код замовлення: ${orderCode}
+Код замовлення: ${escapeMarkdown(orderCode)}
 Загальна вартість замовлення: ${totalPrice}$
 Товари:
 ${cartItems.map(item => `
-Назва товару: ${item.name}
-ID: ${item.id}
+Назва товару: ${escapeMarkdown(item.name)}
+ID: ${escapeMarkdown(item.id)}
 Кількість: ${item.count}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
@@ -183,13 +135,86 @@ ID: ${item.id}
 `;
 
     try {
-        // Send order email
-        await sendOrderEmail(transporter, { cartItems, formData, orderCode, totalPrice });
+        // Send message to Telegram
+        await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
+
+        // Send order confirmation email to admin
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: 'andystep2008@gmail.com',
+            subject: 'Нове замовлення',
+            html: `
+                <div>
+                    <h3>Інформація про покупця</h3>
+                    <p>Ім'я: ${formData.name}</p>
+                    <p>Прізвище: ${formData.sename}</p>
+                    <p>Номер телефону: ${formData.phone}</p>
+                    <p>Емейл: ${formData.email}</p>
+                    <h3>Інформація про замовлення</h3>
+                    <p>Код замовлення: ${orderCode}</p>
+                    <ul>
+                        ${cartItems.map(item => `
+                            <li>
+                                <p>Назва товару: ${item.name}</p>
+                                <p>ID: ${item.id}</p>
+                                <p>Кількість: ${item.count}</p>
+                                <p>Ціна за одиницю: ${item.price}</p>
+                                <p>Загальна ціна: ${item.price * item.count}</p>
+                                <a href="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p>Загальна вартість замовлення: ${totalPrice}$</p>
+                </div>
+            `
+        });
+
+        // Send order confirmation email to client
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: formData.email,
+            subject: 'Підтвердіть ваше замовлення',
+            html: `
+                <div>
+                    <h3>Доброго дня</h3>
+                    <p>Цей спосіб оплати передбачає часткову передплату на карту - у сумі 500 грн
+                    <br>
+                    Реквізити для оплати:
+                    <br>
+                    UA403052990000026004011032613
+                    РНОКПП/ЄДРПОУ 
+                    3648604682  
+                    Призначення платежу: Оплата за товар ( № ${orderCode} )
+                    Отримувач - ФОП АБДІЄВА ЛІЛІЯ-АННА АНДРіїЇВНА
+                    <br>
+                    Для підтвердження замовлення та оплати, будь ласка, відправте НОМЕР ЗАМОВЛЕННЯ та скрін/чек оплати нам у мессенджери нижче, або в директ інстаграм:
+                    <br>
+                    Або повідомте по телефону 380 (68) 419 37 08
+                    <br>
+                    Дякуємо за замовлення!</p>
+                    <h3>Інформація про ваше замовлення</h3>
+                    <p>Код замовлення: ${orderCode}</p>
+                    <ul>
+                        ${cartItems.map(item => `
+                            <li>
+                                <p>Назва товару: ${item.name}</p>
+                                <p>ID: ${item.id}</p>
+                                <p>Кількість: ${item.count}</p>
+                                <p>Ціна за одиницю: ${item.price}</p>
+                                <p>Загальна ціна: ${item.price * item.count}</p>
+                                <a href="https://green-crem.vercel.app/products/${item.id}">Сторінка продукту</a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p>Загальна вартість замовлення: ${totalPrice}$</p>
+                </div>
+            `
+        });
 
         // Save the order in the database
         const newOrder = new Orders({
             pass: orderCode,
-            client,
+            client: client,
             phone: formData.phone,
             email: formData.email,
             goods: cartItems.map(item => ({
@@ -212,7 +237,12 @@ ID: ${item.id}
     }
 });
 
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
 // --------------------------------------------------------- Telegram Bot
+const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_API;
 const bot = new TelegramBot(token, { polling: true });
 
@@ -251,23 +281,18 @@ ID: ${item.id}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
 `).join('')}
-`;
+                    `;
 
-                    bot.sendMessage(chatId, `Знайдене замовлення:\n${messageForTelegram}`);
+                    bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'Markdown' });
                 } else {
-                    bot.sendMessage(chatId, 'Замовлення не знайдено');
+                    bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
                 }
             } catch (error) {
-                console.error('Error finding order:', error);
-                bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення');
+                console.error('Failed to find order:', error);
+                bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
             }
         } else {
-            bot.sendMessage(chatId, 'Введіть код замовлення.');
+            bot.sendMessage(chatId, 'Будь ласка, вкажіть код замовлення після команди /find');
         }
     }
-});
-
-// --------------------------------------------------------- Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
 });
