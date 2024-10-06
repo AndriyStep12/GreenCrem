@@ -17,7 +17,7 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [orderSent, setOrderSent] = useState(false);
-    const [order, setOrder] = useState('');
+    const [order, setOrder] = useState('')
     const [formData, setFormData] = useState({
         name: '',
         sename: '',
@@ -28,9 +28,9 @@ export default function Cart() {
     const [goods, setGoods] = useState([]);
     const [orders, setOrders] = useState([]);
 
-    useEffect(() => {
-        console.log(cartItems);
-    }, [cartItems]);
+    useEffect(()=>{
+        console.log(cartItems)
+    }, [cartItems])
 
     const fetchGoods = async () => {
         try {
@@ -125,15 +125,8 @@ export default function Cart() {
     };
 
     const sendOrderEmail = async () => {
-        // Перевірка на заповненість полів
-        const { name, sename, phone, email } = formData;
-        if (!name || !sename || !phone || !email) {
-            alert('Будь ласка, заповніть всі поля!');
-            return; // Виходимо з функції, якщо поля не заповнені
-        }
-
         const orderCode = generateOrderCode();
-        setOrder(orderCode);
+        setOrder(orderCode)
         const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
@@ -179,7 +172,7 @@ export default function Cart() {
                                     <Item key={item.id} idGood={item.id} count={item.count} price={item.price} removeFromCart={removeFromCart} />
                                 ))
                             ) : (
-                                <h3 className="pusto" style={{ textAlign: "center" }}>Ваша корзина пуста</h3>
+                                <h3 className="pusto" style={{textAlign: "center"}}>Ваша корзина пуста</h3>
                             )}
                         </div>
                         {cartItems.length > 0 && (
@@ -196,44 +189,16 @@ export default function Cart() {
                             <div className="popup-content">
                                 <h2>Оформлення замовлення</h2>
                                 <label>
-                                    <input 
-                                        type="text" 
-                                        name="name" 
-                                        placeholder="Ім'я" 
-                                        value={formData.name} 
-                                        onChange={handleInputChange} 
-                                        autoComplete="off" // Вимкнення підказок
-                                    />
+                                    <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} />
                                 </label>
                                 <label>
-                                    <input 
-                                        type="text" 
-                                        name="sename" 
-                                        placeholder="Прізвище" 
-                                        value={formData.sename} 
-                                        onChange={handleInputChange} 
-                                        autoComplete="off" // Вимкнення підказок
-                                    />
+                                    <input type="text" name="sename" placeholder="Прізвище" value={formData.sename} onChange={handleInputChange} />
                                 </label>
                                 <label>
-                                    <input 
-                                        type="text" 
-                                        name="phone" 
-                                        placeholder="Номер телефону" 
-                                        value={formData.phone} 
-                                        onChange={handleInputChange} 
-                                        autoComplete="off" // Вимкнення підказок
-                                    />
+                                    <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} />
                                 </label>
                                 <label>
-                                    <input 
-                                        type="email" 
-                                        name="email" 
-                                        placeholder="Емейл" 
-                                        value={formData.email} 
-                                        onChange={handleInputChange} 
-                                        autoComplete="off" // Вимкнення підказок
-                                    />
+                                    <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} />
                                 </label>
                                 <span>Вартість: {totalPrice}$</span>
                                 <button onClick={sendOrderEmail}>Підтвердити</button>
@@ -243,20 +208,22 @@ export default function Cart() {
                     </>
                 )}
                 {orderSent && (
-                    <div className="overlayOrder">
-                        <div className="order-confirmation">
-                            <div>
-                                <ul>
-                                    <li>Ваше замовлення було успішно відправлено.</li>
-                                    <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
-                                    <li>Код вашого замовлення <b>{order}</b>.</li>
-                                    <li>Перевірити своє замовлення ви можете у телеграмі.</li>
-                                </ul>
-                                <button onClick={closeOrderConfirmation}>Закрити</button>
-                            </div>
+                <div className="overlayOrder">
+                    <div className="order-confirmation">
+                        <div>
+                            <ul>
+                                <li>Ваше замовлення було успішно відправлено.</li>
+                                <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
+                                <li>Код вашого замовлення <b>{order}</b>.</li>
+                                <li>Перевірити своє замовлення ви можете у телеграм боті <a href="https://t.me/greencrem_bot">greencrem_bot</a> (напишіть команду /find *код замовлення*)</li>
+                            </ul>
+                        </div>
+                        <div className="end">
+                            <button onClick={closeOrderConfirmation}>Закрити</button>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
             </div>
         </>
     );
