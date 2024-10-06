@@ -208,22 +208,20 @@ export default function Cart() {
                     </>
                 )}
                 {orderSent && (
-                <div className="overlayOrder">
-                    <div className="order-confirmation">
-                        <div>
-                            <ul>
-                                <li>Ваше замовлення було успішно відправлено.</li>
-                                <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
-                                <li>Код вашого замовлення <b>{order}</b>.</li>
-                                <li>Перевірити своє замовлення ви можете у телеграм боті <a href="https://t.me/greencrem_bot">greencrem_bot</a> (напишіть команду /find *код замовлення*)</li>
-                            </ul>
-                        </div>
-                        <div className="end">
-                            <button onClick={closeOrderConfirmation}>Закрити</button>
+                    <div className="overlayOrder">
+                        <div className="order-confirmation">
+                            <div>
+                                <ul>
+                                    <li>Ваше замовлення було успішно відправлено.</li>
+                                    <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
+                                    <li>Код вашого замовлення <b>{order}</b>.</li>
+                                    <li>Перевірити своє замовлення ви можете у телеграмі.</li>
+                                </ul>
+                                <button onClick={closeOrderConfirmation}>Закрити</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
             </div>
         </>
     );
