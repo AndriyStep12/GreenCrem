@@ -29,8 +29,8 @@ const LeftBar = () => {
                     <li><Linker name={`Всі продукти`} path={'/products/'} classN={'li'} /></li>
                 </ul>
                 <Linker name={`Головна сторінка`} path={'/'} classN={'h2'} />
-                <Linker name={`Контактна інформація`} path={'/'} classN={'h2'} />
-                <Linker name={`Про нас`} path={'/'} classN={'h2'} />
+                <Linker name={`Телеграм бот`} path={'https://t.me/greencrem_bot'} classN={'h2'} />
+                <Linker name={`Як користуватися ботом`} path={'/telegram-help'} classN={'h2'} />
             </div>
         </>
     );

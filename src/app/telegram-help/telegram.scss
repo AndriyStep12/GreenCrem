@@ -1,0 +1,23 @@
+.telegram-help{
+    display: flex;
+    flex-direction: row;
+    .block{
+        padding: 20px;
+        width: 70%;
+        h2{
+            text-align: center;
+        }
+    }
+    li, p{
+        margin: 15px 0;
+    }
+}
+
+@media screen and (max-width: 786px) {
+    .telegram-help{
+        flex-direction: column;
+        .block{
+            width: 100%;
+        }
+    }
+}
