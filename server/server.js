@@ -242,15 +242,35 @@ app.listen(PORT, () => {
 });
 
 // --------------------------------------------------------- Telegram Bot
+// --------------------------------------------------------- Telegram Bot
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_API;
 const bot = new TelegramBot(token, { polling: true });
 
-bot.onText(/\/myID/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `Your chat id - ${chatId}`);
-});
+// Екранірування символів для MarkdownV2
+const escapeMarkdown = (text) => {
+    return text
+        .replace(/_/g, '\\_')
+        .replace(/\*/g, '\\*')
+        .replace(/\[/g, '\\[')
+        .replace(/\]/g, '\\]')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)')
+        .replace(/~/g, '\\~')
+        .replace(/`/g, '\\`')
+        .replace(/>/g, '\\>')
+        .replace(/#/g, '\\#')
+        .replace(/\+/g, '\\+')
+        .replace(/-/g, '\\-')
+        .replace(/=/g, '\\=')
+        .replace(/\|/g, '\\|')
+        .replace(/{/g, '\\{')
+        .replace(/}/g, '\\}')
+        .replace(/\./g, '\\.')
+        .replace(/!/g, '\\!');
+};
 
+// Обробник команди /find
 bot.onText(/\/find (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const orderCode = match[1].trim();
@@ -266,27 +286,36 @@ bot.onText(/\/find (.+)/, async (msg, match) => {
         if (order) {
             const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
 
+            // Формування повідомлення з екраніруванням символів
             const messageForTelegram = `
 🛒 *Знайдене замовлення*
 *Інформація про покупця:*
-Ім'я: ${order.client}
-Номер телефону: ${order.phone}
-Емейл: ${order.email}
+Ім'я: ${escapeMarkdown(order.client)}
+Номер телефону: ${escapeMarkdown(order.phone)}
+Емейл: ${escapeMarkdown(order.email)}
 
 *Інформація про замовлення:*
-Код замовлення: ${order.pass}
+Код замовлення: ${escapeMarkdown(order.pass)}
 Загальна вартість замовлення: ${totalPrice}$
 Товари:
 ${order.goods.map(item => `
-Назва товару: ${item.name}
-ID: ${item.id}
+Назва товару: ${escapeMarkdown(item.name)}
+ID: ${escapeMarkdown(item.id)}
 Кількість: ${item.count}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
 `).join('')}
             `;
 
-            bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'Markdown' });
+            // Розбивка повідомлення на частини, якщо воно перевищує 4096 символів
+            if (messageForTelegram.length > 4096) {
+                const parts = messageForTelegram.match(/[\s\S]{1,4096}/g);
+                for (const part of parts) {
+                    await bot.sendMessage(chatId, part, { parse_mode: 'MarkdownV2' });
+                }
+            } else {
+                bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'MarkdownV2' });
+            }
         } else {
             bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
         }
