@@ -251,19 +251,22 @@ bot.onText(/\/myID/, (msg) => {
     bot.sendMessage(chatId, `Your chat id - ${chatId}`);
 });
 
-bot.on('message', async (msg) => {
+bot.onText(/\/find (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
-    if (msg.text === '/myID') {
-        bot.sendMessage(chatId, `Your chat id - ${chatId}`);
-    } else if (msg.text.startsWith('/find')) {
-        const orderCode = msg.text.split(' ')[1];
-        if (orderCode) {
-            try {
-                const order = await Orders.findOne({ pass: orderCode });
-                if (order) {
-                    const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+    const orderCode = match[1].trim();
 
-                    const messageForTelegram = `
+    if (!orderCode) {
+        bot.sendMessage(chatId, 'Будь ласка, введіть код замовлення після команди /find.');
+        return;
+    }
+
+    try {
+        const order = await Orders.findOne({ pass: orderCode });
+
+        if (order) {
+            const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+
+            const messageForTelegram = `
 🛒 *Знайдене замовлення*
 *Інформація про покупця:*
 Ім'я: ${order.client}
@@ -281,18 +284,14 @@ ID: ${item.id}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
 `).join('')}
-                    `;
+            `;
 
-                    bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'Markdown' });
-                } else {
-                    bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
-                }
-            } catch (error) {
-                console.error('Failed to find order:', error);
-                bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
-            }
+            bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'Markdown' });
         } else {
-            bot.sendMessage(chatId, 'Будь ласка, вкажіть код замовлення після команди /find');
+            bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
         }
+    } catch (error) {
+        console.error('Failed to find order:', error);
+        bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
     }
 });

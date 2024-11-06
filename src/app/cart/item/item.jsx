@@ -50,9 +50,9 @@ const Item = ({ idGood, count, removeFromCart }) => {
                 {item && item.name}
                 <div className="row">
                     <div className="count">Кількість: {count}</div>
-                    <div className="price">{item && item.price}$</div>
+                    <div className="price">{item && item.price}₴</div>
                 </div>
-                Загальна ціна: {item && item.price * count}$
+                Загальна ціна: {item && item.price * count}₴
             </div>
             <div className="end">
                 {item && (

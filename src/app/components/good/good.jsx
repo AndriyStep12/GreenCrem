@@ -13,13 +13,13 @@ const Good = ({name, img, id, description, count, price}) => {
             </div>
             <div className="center">
                 {name}
-                <div className="price">{price}$</div>
+                <div className="price">{price}₴</div>
                 <span className={count > 0 ? 'is': 'is_not'}>
                     {count > 0 ? 'Є в наявності': 'Нема в наявності'}
                 </span>
             </div>
             <div className="end">
-                <Link className="link" href={`/products/${id}`}><button className="buy">Сторінка продукту</button></Link>
+                <Link className="link" href={`/products/${id}`}><button className="buy">Придбати</button></Link>
                 <LoveBtn idGood={id}/>
             </div>
         </div>

@@ -159,6 +159,13 @@ export default function Cart() {
         document.body.style.overflowY = "auto";
     };
 
+    const copyOrderToClipboard = () => {
+        navigator.clipboard.writeText(order).then(() => {
+            alert("Номер замовлення скопійовано!");
+        });
+    };
+
+
     return (
         <>
             <div className="cart">
@@ -172,7 +179,7 @@ export default function Cart() {
                                     <Item key={item.id} idGood={item.id} count={item.count} price={item.price} removeFromCart={removeFromCart} />
                                 ))
                             ) : (
-                                <h3 className="pusto" style={{textAlign: "center"}}>Ваша корзина пуста</h3>
+                                <h3 className="pusto" style={{textAlign: "center", width: "100%", margin: "40px 0"}}>Ваша корзина пуста</h3>
                             )}
                         </div>
                         {cartItems.length > 0 && (
@@ -200,7 +207,7 @@ export default function Cart() {
                                 <label>
                                     <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} />
                                 </label>
-                                <span>Вартість: {totalPrice}$</span>
+                                <span>Вартість: {totalPrice}₴</span>
                                 <button onClick={sendOrderEmail}>Підтвердити</button>
                                 <button className="cancel" onClick={() => setShowPopup(false)}>Скасувати</button>
                             </div>
@@ -214,10 +221,10 @@ export default function Cart() {
                                 <ul>
                                     <li>Ваше замовлення було успішно відправлено.</li>
                                     <li>Будь ласка, перевірте свій email для подальшої інформації.</li>
-                                    <li>Код вашого замовлення <b>{order}</b>.</li>
-                                    <li>Перевірити своє замовлення ви можете у телеграміa</li>
+                                    <li>Код вашого замовлення: <b>{order}</b>.</li>
                                 </ul>
-                                <button onClick={closeOrderConfirmation}>Закрити</button>
+                                <button onClick={copyOrderToClipboard}>Копіювати номер</button>
+                                <button onClick={closeOrderConfirmation}>Повернутися</button>
                             </div>
                         </div>
                     </div>
