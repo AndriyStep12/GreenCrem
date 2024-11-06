@@ -196,16 +196,16 @@ export default function Cart() {
                             <div className="popup-content">
                                 <h2>Оформлення замовлення</h2>
                                 <label>
-                                    <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} />
+                                    <input type="text" name="name" placeholder="Ім'я" value={formData.name} onChange={handleInputChange} autoComplete="off"/>
                                 </label>
                                 <label>
-                                    <input type="text" name="sename" placeholder="Прізвище" value={formData.sename} onChange={handleInputChange} />
+                                    <input type="text" name="sename" placeholder="Прізвище" value={formData.sename} onChange={handleInputChange} autoComplete="off"/>
                                 </label>
                                 <label>
-                                    <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} />
+                                    <input type="text" name="phone" placeholder="Номер телефону" value={formData.phone} onChange={handleInputChange} autoComplete="off"/>
                                 </label>
                                 <label>
-                                    <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} />
+                                    <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} autoComplete="off"/>
                                 </label>
                                 <span>Вартість: {totalPrice}₴</span>
                                 <button onClick={sendOrderEmail}>Підтвердити</button>
