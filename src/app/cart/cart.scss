@@ -176,23 +176,26 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-
+        padding: 20px;
+        width: 90%; // Adjust width on larger screens
+    
         h2 {
             margin-bottom: 20px;
             font-size: 24px;
             color: #000;
         }
-
+    
         label {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             width: 100%;
             margin-bottom: 15px;
-
+    
             input {
                 border: none;
-                width: 500px;
+                width: 100%; // Make input take the full width
+                max-width: 500px; // Limit max width on larger screens
                 height: 45px;
                 border-bottom: 1px solid #000;
                 padding: 0 20px;
@@ -200,7 +203,7 @@
                 outline: none;
             }
         }
-
+    
         button {
             cursor: pointer;
             width: 150px;
@@ -214,23 +217,48 @@
             box-shadow: 0 0 10px 5px rgba(29, 186, 89, 0.23);
             transition: 0.4s;
             margin: 10px;
-
+    
             &:hover {
                 background-color: #1DBA59;
                 box-shadow: 0 0 15px 10px rgba(29, 186, 89, 0.23);
             }
         }
-
+    
         .cancel {
             box-shadow: 0 0 10px 5px rgba(186, 29, 29, 0.23);
-
+    
             &:hover {
                 background-color: rgb(223, 100, 100);
                 box-shadow: 0 0 15px 10px rgba(186, 29, 29, 0.23);
             }
         }
     }
+    
+    
 }
+
+@media (max-width: 768px) {
+    .popup-content {
+        width: 100%;
+        padding: 10px;
+
+        label {
+            input {
+                max-width: 100%;
+                width: 100%;
+                height: 40px;
+                padding: 0 10px;
+                font-size: 16px;
+            }
+        }
+
+        button {
+            width: 100%;
+            max-width: 200px;
+        }
+    }
+}
+
 
 @media (max-width: 1468px) {
     .cart .content .row {
