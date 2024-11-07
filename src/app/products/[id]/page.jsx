@@ -10,13 +10,15 @@ import Loader from "@/app/components/loader/loader";
 import confetti from "canvas-confetti";
 import useCartStore from "@/functions/cart";
 
-
 export default function Product({ params: { id } }) {
-    const { carts, cartsIncrement, cartsDecrement, cartsZero } = useCartStore();
+    const { carts, cartsIncrement } = useCartStore();
     const [goods, setGoods] = useState([]);
     const [product, setProduct] = useState({});
     const [count, setCount] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState(false);
+
+    
 
     useEffect(() => {
         const fetchGoods = async () => {
@@ -26,6 +28,7 @@ export default function Product({ params: { id } }) {
             } catch (error) {
                 console.error('Error setting goods:', error);
             }
+            setLoading(false);
         };
 
         fetchGoods();
@@ -35,7 +38,6 @@ export default function Product({ params: { id } }) {
         if (goods.length > 0) {
             setProduct(findGoodById(goods, id));
         }
-        setLoading(false);
     }, [goods, id]);
 
     function findGoodById(goods, id) {
@@ -62,7 +64,7 @@ export default function Product({ params: { id } }) {
             existingItem.count += count;
         } else {
             cartItems.push({ id, count });
-            cartsIncrement()
+            cartsIncrement();
         }
 
         Cookies.set('cart', JSON.stringify(cartItems));
@@ -75,36 +77,55 @@ export default function Product({ params: { id } }) {
         });
     }
 
+    useEffect(() => {
+        if (product.count > 0) {
+            setStatus(true);
+        }
+        console.log(findGoodById(goods, id));
+    }, [goods, id]);
+
     return (
-        <>
-            <div className="product">
-                <LeftBar />
-                {loading ? <Loader/> :
-                    <div className="product_page">
-                        <div className="product_image">
-                            {product.img && <Image src={`/uploads/${product.img}`} alt={product.name} width={1000} height={1000} className="img_product" />}
-                        </div>
-                        <div className="product_info">
-                            <h2 className="name">{product.name}</h2>
-                            <h3 className="price">Ціна: {product.price}₴</h3>
-                            <p>Опис: {product.description}</p>
-                            {product.count > 0 ? <div className="count">
+        <div className="product">
+            <LeftBar />
+            {loading ? (
+                <Loader />
+            ) : !status ? (
+                <div className="error-message">
+                    Неправильне посилання, продукт не знайдено.
+                </div>
+            ) : (
+                <div className="product_page">
+                    <div className="product_image">
+                        {product.img && (
+                            <Image src={`/uploads/${product.img}`} alt={product.name} width={1000} height={1000} className="img_product" />
+                        )}
+                    </div>
+                    <div className="product_info">
+                        <h2 className="name">{product.name}</h2>
+                        <h3 className="price">Ціна: {product.price}₴</h3>
+                        <p>Опис: {product.description}</p>
+                        {product.count > 0 ? (
+                            <div className="count">
                                 <button className="btn" onClick={functionMinus}>-</button>
                                 <div className="counter">{count}</div>
                                 <button className="btn" onClick={functionAdd}>+</button>
-                            </div> : null}
-                            <div className="btn_row">
-                                <div className="first">
-                                    {product.count > 0 ? <button onClick={addToCart} className="addToCart">
-                                        Добавити до корзини
-                                    </button> : <p className="no">Нема в наявності :(</p>}
-                                </div>
-                                <LoveBtn idGood={id} />
                             </div>
+                        ) : null}
+                        <div className="btn_row">
+                            <div className="first">
+                                {product.count > 0 ? (
+                                    <button onClick={addToCart} className="addToCart">
+                                        Добавити до корзини
+                                    </button>
+                                ) : (
+                                    <p className="no">Нема в наявності :(</p>
+                                )}
+                            </div>
+                            <LoveBtn idGood={id} />
                         </div>
                     </div>
-                }
-            </div>
-        </>
+                </div>
+            )}
+        </div>
     );
 }

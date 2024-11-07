@@ -1,21 +1,26 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Cookies from 'js-cookie';
-import { updateCart, updateWishlist } from '@/functions/cartUtils';
 import './header.scss';
 import useLikesStore from "@/functions/likes";
 import useCartStore from "@/functions/cart";
 
 const Header = () => {
     const [search, setSearch] = useState('');
-    const { likes, likesIncrement, likesDecrement } = useLikesStore();
-    const { carts, cartsIncrement, cartsDecrement } = useCartStore();
-
+    const { likes } = useLikesStore();
+    const { carts } = useCartStore();
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
+    };
+
+    const handleSearchClick = () => {
+        if (search.trim() === '') {
+            alert("Будь ласка, введіть щось для пошуку");
+            return;
+        }
+        window.location.href = `/products/search/${search}`;
     };
 
     return (
@@ -28,11 +33,9 @@ const Header = () => {
             </Link>
             <div className="search">
                 <input value={search} onChange={handleSearchChange} type="text" placeholder="Пошук..." />
-                <Link href={`/products/search/${search}`}>
-                    <button className="iconBtn" id="searchBtn" alt="search">
-                        <Image className="icon" src="/icons/search.png" alt="search" width={100} height={100} />
-                    </button>
-                </Link>
+                <button className="iconBtn" id="searchBtn" onClick={handleSearchClick} alt="search">
+                    <Image className="icon" src="/icons/search.png" alt="search" width={100} height={100} />
+                </button>
             </div>
             <div className="btns">
                 <Link href={'/cart'}>
