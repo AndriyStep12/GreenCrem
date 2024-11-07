@@ -81,8 +81,9 @@ export default function Product({ params: { id } }) {
         if (product.count > 0) {
             setStatus(true);
         }
-        console.log(findGoodById(goods, id));
-    }, [goods, id]);
+        console.log(product);
+        console.log(product.count);
+    }, [product, id]);
 
     return (
         <div className="product">
