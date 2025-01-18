@@ -137,6 +137,7 @@ ID: ${escapeMarkdown(item.id)}
     try {
         // Send message to Telegram
         await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
+        await bot.sendMessage(5593526966, messageForTelegram, { parse_mode: 'Markdown' });
 
         // Send order confirmation email to admin
         await transporter.sendMail({
