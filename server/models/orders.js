@@ -16,8 +16,9 @@ const ordersSchema = new mongoose.Schema({
         description: String,
         tags: [String],
         count: Number,
-        img: String
-    }]
+        totalPrice: Number
+    }],
+    totalPrice: Number
 });
 
 module.exports = mongoose.model('orders', ordersSchema);
