@@ -209,7 +209,7 @@ export default function Cart() {
                                 <span>Вартість: {totalPrice}₴</span>
                                 <button onClick={()=>{
                                     console.log({ cartItems, formData })
-                                    // sendOrderEmail();
+                                    sendOrderEmail();
                                 }}>Підтвердити</button>
                                 <button className="cancel" onClick={() => setShowPopup(false)}>Скасувати</button>
                             </div>
