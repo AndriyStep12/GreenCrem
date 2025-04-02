@@ -127,6 +127,7 @@ export default function Cart() {
     const sendOrderEmail = async () => {
         const orderCode = generateOrderCode();
         setOrder(orderCode)
+        console.log(JSON.stringify({ cartItems, formData, orderCode }))
         const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
