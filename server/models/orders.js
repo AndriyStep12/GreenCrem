@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
 const ordersSchema = new mongoose.Schema({
-    pass: {
-        type: String,
-        required: true
-    },
+    pass: String,
     client: String,
     phone: String,
     email: String,
+    status: {
+        type: String,
+        default: 'Pending'
+    },
     goods: [{
         name: String,
         id: String,
@@ -15,13 +16,8 @@ const ordersSchema = new mongoose.Schema({
         description: String,
         tags: [String],
         count: Number,
-        img: String,
-        totalPrice: Number
-    }],
-    status: {
-        type: String,
-        default: 'Pending'
-    }
+        img: String
+    }]
 });
 
 module.exports = mongoose.model('orders', ordersSchema);

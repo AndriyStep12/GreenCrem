@@ -86,7 +86,6 @@ app.get('/api/orders', async (req, res) => {
 });
 
 app.post('/send-order', async (req, res) => {
-    try {
         const { cartItems, formData, orderCode } = req.body;
         const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
         console.log('Received cart items:', cartItems);
@@ -238,10 +237,6 @@ app.post('/send-order', async (req, res) => {
         res.status(200).json({
             message: 'Order placed successfully and emails sent'
         });
-    } catch (error) {
-        console.error('Error sending order:', error);
-        res.status(500).send('Internal Server Error');
-    }
 });
 
 app.listen(PORT, () => {
