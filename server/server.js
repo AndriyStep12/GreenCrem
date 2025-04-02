@@ -7,10 +7,22 @@ const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+// --------------------------------------------------------- Telegram Bot Initialization
+const token = process.env.BOT_API;
+let bot = null;
+
+if (token) {
+    bot = new TelegramBot(token, { polling: true });
+    console.log('Telegram bot initialized successfully');
+} else {
+    console.warn('Telegram bot token not found in environment variables');
+}
 
 // --------------------------------------------------------- Importing models
 const Goods = require('./models/goods');
@@ -175,21 +187,25 @@ ID: ${escapeMarkdown(item.id)}
         `;
 
         // Надсилання повідомлення через Telegram бот
-        const telegramUserIds = ['1015683844', '5593526966'];
-        for (const userId of telegramUserIds) {
-            try {
-                // Розбивка повідомлення на частини, якщо воно перевищує 4096 символів
-                if (messageForTelegram.length > 4096) {
-                    const parts = messageForTelegram.match(/[\s\S]{1,4096}/g);
-                    for (const part of parts) {
-                        await bot.sendMessage(userId, part, { parse_mode: 'MarkdownV2' });
+        if (bot) {
+            const telegramUserIds = ['1015683844', '5593526966'];
+            for (const userId of telegramUserIds) {
+                try {
+                    // Розбивка повідомлення на частини, якщо воно перевищує 4096 символів
+                    if (messageForTelegram.length > 4096) {
+                        const parts = messageForTelegram.match(/[\s\S]{1,4096}/g);
+                        for (const part of parts) {
+                            await bot.sendMessage(userId, part, { parse_mode: 'MarkdownV2' });
+                        }
+                    } else {
+                        await bot.sendMessage(userId, messageForTelegram, { parse_mode: 'MarkdownV2' });
                     }
-                } else {
-                    await bot.sendMessage(userId, messageForTelegram, { parse_mode: 'MarkdownV2' });
+                } catch (error) {
+                    console.error(`Помилка при надсиланні повідомлення користувачу ${userId}:`, error);
                 }
-            } catch (error) {
-                console.error(`Помилка при надсиланні повідомлення користувачу ${userId}:`, error);
             }
+        } else {
+            console.warn('Telegram bot is not initialized, skipping message sending');
         }
 
         // Формування HTML для електронного листа
@@ -255,29 +271,26 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// --------------------------------------------------------- Telegram Bot
-const TelegramBot = require('node-telegram-bot-api');
-const token = process.env.BOT_API;
-const bot = new TelegramBot(token, { polling: true });
+// --------------------------------------------------------- Telegram Bot Handlers
+if (bot) {
+    // Обробник команди /find
+    bot.onText(/\/find (.+)/, async (msg, match) => {
+        const chatId = msg.chat.id;
+        const orderCode = match[1].trim();
 
-// Обробник команди /find
-bot.onText(/\/find (.+)/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const orderCode = match[1].trim();
+        if (!orderCode) {
+            bot.sendMessage(chatId, 'Будь ласка, введіть код замовлення після команди /find.');
+            return;
+        }
 
-    if (!orderCode) {
-        bot.sendMessage(chatId, 'Будь ласка, введіть код замовлення після команди /find.');
-        return;
-    }
+        try {
+            const order = await Orders.findOne({ pass: orderCode });
 
-    try {
-        const order = await Orders.findOne({ pass: orderCode });
+            if (order) {
+                const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
 
-        if (order) {
-            const totalPrice = order.goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
-
-            // Формування повідомлення з екраніруванням символів
-            const messageForTelegram = `
+                // Формування повідомлення з екраніруванням символів
+                const messageForTelegram = `
 🛒 *Знайдене замовлення*
 *Інформація про покупця:*
 Ім'я: ${escapeMarkdown(order.client)}
@@ -295,22 +308,23 @@ ID: ${escapeMarkdown(item.id)}
 Ціна за одиницю: ${item.price}
 Загальна ціна: ${item.price * item.count}
 `).join('')}
-            `;
+                `;
 
-            // Розбивка повідомлення на частини, якщо воно перевищує 4096 символів
-            if (messageForTelegram.length > 4096) {
-                const parts = messageForTelegram.match(/[\s\S]{1,4096}/g);
-                for (const part of parts) {
-                    await bot.sendMessage(chatId, part, { parse_mode: 'MarkdownV2' });
+                // Розбивка повідомлення на частини, якщо воно перевищує 4096 символів
+                if (messageForTelegram.length > 4096) {
+                    const parts = messageForTelegram.match(/[\s\S]{1,4096}/g);
+                    for (const part of parts) {
+                        await bot.sendMessage(chatId, part, { parse_mode: 'MarkdownV2' });
+                    }
+                } else {
+                    bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'MarkdownV2' });
                 }
             } else {
-                bot.sendMessage(chatId, messageForTelegram, { parse_mode: 'MarkdownV2' });
+                bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
             }
-        } else {
-            bot.sendMessage(chatId, 'Замовлення з таким кодом не знайдено.');
+        } catch (error) {
+            console.error('Failed to find order:', error);
+            bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
         }
-    } catch (error) {
-        console.error('Failed to find order:', error);
-        bot.sendMessage(chatId, 'Виникла помилка при пошуку замовлення.');
-    }
-});
+    });
+}
