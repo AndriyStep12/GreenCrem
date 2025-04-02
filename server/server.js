@@ -86,10 +86,21 @@ app.get('/api/orders', async (req, res) => {
 });
 
 app.post('/send-order', async (req, res) => {
-    const { cartItems, formData, orderCode } = req.body;
-    const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
-    console.log('Received cart items:', cartItems);
-    console.log('Received form data:', formData);
+    try {
+        const { cartItems, formData, orderCode } = req.body;
+        const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+        console.log('Received cart items:', cartItems);
+        console.log('Received form data:', formData);
+
+        // Create and save the order in MongoDB
+        const newOrder = new Orders({
+            pass: orderCode,
+            client: `${formData.name} ${formData.sename}`,
+            phone: formData.phone,
+            email: formData.email,
+            goods: cartItems
+        });
+        await newOrder.save();
 
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',

@@ -58,10 +58,12 @@ const Item = ({ idGood, count, removeFromCart }) => {
                 {item && (
                     <Link className="link" href={`/products/${item.id}`}>Сторінка продукту</Link>
                 )}
-                <LoveBtn idGood={item && item.id} />
-                <button className="btn_del" onClick={() => removeFromCart(idGood)}>
-                    <Image className="del_img" src={'/icons/del.png'} width={50} height={50} alt="Delete" />
-                </button>
+                <div className="row">
+                    <LoveBtn idGood={item && item.id} />
+                    <button className="btn_del" onClick={() => removeFromCart(idGood)}>
+                        <Image className="del_img" src={'/icons/del.png'} width={50} height={50} alt="Delete" />
+                    </button>
+                </div>
             </div>
         </div>
     );
