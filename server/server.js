@@ -92,63 +92,51 @@ app.post('/send-order', async (req, res) => {
         console.log('Received cart items:', cartItems);
         console.log('Received form data:', formData);
 
-        // Create and save the order in MongoDB
-        const newOrder = new Orders({
-            pass: orderCode,
-            client: `${formData.name} ${formData.sename}`,
-            phone: formData.phone,
-            email: formData.email,
-            goods: cartItems
-        });
-        await newOrder.save();
+        const client = `${formData.name} ${formData.sename}`;
 
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+        // Function to escape special characters in Markdown
+        const escapeMarkdown = (text) => {
+            return text.replace(/_/g, '\_')
+                       .replace(/\*/g, '\\*')
+                       .replace(/\[/g, '\\[')
+                       .replace(/`/g, '\\`')
+                       .replace(/>/g, '\\>')
+                       .replace(/-/g, '\\-');
+        };
 
-    const client = `${formData.name} ${formData.sename}`;
+        const messageForTelegram = `
+            🛒 *Нове замовлення*
+            *Інформація про покупця:*
+            Ім'я: ${escapeMarkdown(formData.name)}
+            Прізвище: ${escapeMarkdown(formData.sename)}
+            Номер телефону: ${escapeMarkdown(formData.phone)}
+            Емейл: ${escapeMarkdown(formData.email)}
 
-    // Function to escape special characters in Markdown
-    const escapeMarkdown = (text) => {
-        return text.replace(/_/g, '\\_')
-                   .replace(/\*/g, '\\*')
-                   .replace(/\[/g, '\\[')
-                   .replace(/`/g, '\\`')
-                   .replace(/>/g, '\\>')
-                   .replace(/-/g, '\\-');
-    };
+            *Інформація про замовлення:*
+            Код замовлення: ${escapeMarkdown(orderCode)}
+            Загальна вартість замовлення: ${totalPrice}$
+            Товари:
+            ${cartItems.map(item => `
+                Назва товару: ${escapeMarkdown(item.name)}
+                ID: ${escapeMarkdown(item.id)}
+                Кількість: ${item.count}
+                Ціна за одиницю: ${item.price}
+                Загальна ціна: ${item.price * item.count}
+            `).join('')}`;
 
-    const messageForTelegram = `
-🛒 *Нове замовлення*
-*Інформація про покупця:*
-Ім'я: ${escapeMarkdown(formData.name)}
-Прізвище: ${escapeMarkdown(formData.sename)}
-Номер телефону: ${escapeMarkdown(formData.phone)}
-Емейл: ${escapeMarkdown(formData.email)}
-
-*Інформація про замовлення:*
-Код замовлення: ${escapeMarkdown(orderCode)}
-Загальна вартість замовлення: ${totalPrice}$
-Товари:
-${cartItems.map(item => `
-Назва товару: ${escapeMarkdown(item.name)}
-ID: ${escapeMarkdown(item.id)}
-Кількість: ${item.count}
-Ціна за одиницю: ${item.price}
-Загальна ціна: ${item.price * item.count}
-`).join('')}
-`;
-
-    try {
         // Send message to Telegram
         await bot.sendMessage(1015683844, messageForTelegram, { parse_mode: 'Markdown' });
         await bot.sendMessage(5593526966, messageForTelegram, { parse_mode: 'Markdown' });
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
 
         // Send order confirmation email to admin
         await transporter.sendMail({
