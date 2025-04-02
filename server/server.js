@@ -212,6 +212,7 @@ app.post('/send-order', async (req, res) => {
         });
 
         // Save the order in the database
+        console.log('Attempting to save order to database...');
         const newOrder = new Orders({
             pass: orderCode,
             client: client,
@@ -226,7 +227,13 @@ app.post('/send-order', async (req, res) => {
             })),
             status: 'Pending',
         });
-        await newOrder.save();
+        try {
+            const savedOrder = await newOrder.save();
+            console.log('Order saved successfully:', savedOrder);
+        } catch (dbError) {
+            console.error('Failed to save order to database:', dbError);
+            throw new Error('Failed to save order to database');
+        }
 
         res.status(200).json({
             message: 'Order placed successfully and emails sent'
