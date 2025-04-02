@@ -125,8 +125,7 @@ export default function Cart() {
     };
 
     const sendOrderEmail = async () => {
-        const orderCode = generateOrderCode();
-        setOrder(orderCode)
+        setOrder(generateOrderCode())
         const response = await fetch('https://greencrem.onrender.com/send-order', {
             method: 'POST',
             headers: {
@@ -208,7 +207,10 @@ export default function Cart() {
                                     <input type="email" name="email" placeholder="Емейл" value={formData.email} onChange={handleInputChange} autoComplete="off"/>
                                 </label>
                                 <span>Вартість: {totalPrice}₴</span>
-                                <button onClick={sendOrderEmail}>Підтвердити</button>
+                                <button onClick={()=>{
+                                    console.log({ cartItems, formData })
+                                    // sendOrderEmail();
+                                }}>Підтвердити</button>
                                 <button className="cancel" onClick={() => setShowPopup(false)}>Скасувати</button>
                             </div>
                         </div>

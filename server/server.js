@@ -139,33 +139,29 @@ app.get('/api/orders', async (req, res) => {
 // Маршрут для обробки нових замовлень
 app.post('/send-order', async (req, res) => {
     try {
-        const { client, phone, email, goods } = req.body;
+        const { cartItems, formData, orderCode } = req.body;
 
         // Валідація вхідних даних
-        if (!client || !phone || !email || !goods || !Array.isArray(goods) || goods.length === 0) {
+        if (!cartItems || !formData || !orderCode) {
             return res.status(400).json({ success: false, message: 'Неповні дані замовлення' });
         }
 
-        // Генерація унікального ID для замовлення
-        const orderPass = generateOrderId();
+        const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
+        const client = `${formData.name} ${formData.sename}`;
+        const phone = formData.phone;
+        const email = formData.email;
 
-        // Розрахунок загальної вартості
-        const totalPrice = goods.reduce((sum, item) => sum + (item.price || 0) * item.count, 0);
-
-        // Створення нового замовлення
         const newOrder = new Orders({
-            pass: orderPass,
+            pass: orderCode,
             client,
             phone,
             email,
-            goods,
+            goods: cartItems,
             totalPrice
         });
 
-        // Збереження замовлення в базу даних
         await newOrder.save();
 
-        // Формування повідомлення для Telegram
         const messageForTelegram = `
 🛒 *Нове замовлення*
 *Інформація про покупця:*
@@ -177,7 +173,7 @@ app.post('/send-order', async (req, res) => {
 Код замовлення: ${escapeMarkdown(orderPass)}
 Загальна вартість замовлення: ${totalPrice}$
 Товари:
-${goods.map(item => `
+${cartItems.map(item => `
 Назва товару: ${escapeMarkdown(item.name)}
 ID: ${escapeMarkdown(item.id)}
 Кількість: ${item.count}
@@ -211,7 +207,7 @@ ID: ${escapeMarkdown(item.id)}
         // Формування HTML для електронного листа
         const emailHtml = `
         <h2>Дякуємо за ваше замовлення!</h2>
-        <p><strong>Код замовлення:</strong> ${orderPass}</p>
+        <p><strong>Код замовлення:</strong> ${orderCode}</p>
         <p><strong>Ім'я:</strong> ${client}</p>
         <p><strong>Телефон:</strong> ${phone}</p>
         <p><strong>Email:</strong> ${email}</p>
@@ -223,7 +219,7 @@ ID: ${escapeMarkdown(item.id)}
                 <th>Ціна за одиницю</th>
                 <th>Загальна ціна</th>
             </tr>
-            ${goods.map(item => `
+            ${cartItems.map(item => `
             <tr>
                 <td>${item.name}</td>
                 <td>${item.count}</td>
@@ -244,7 +240,7 @@ ID: ${escapeMarkdown(item.id)}
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: `Підтвердження замовлення #${orderPass} - GreenCrem`,
+            subject: `Підтвердження замовлення ${orderPass} - GreenCrem`,
             html: emailHtml
         };
 

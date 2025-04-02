@@ -12,11 +12,11 @@ const ordersSchema = new mongoose.Schema({
     goods: [{
         name: String,
         id: String,
+        img: String,
         price: Number,
         description: String,
         tags: [String],
-        count: Number,
-        totalPrice: Number
+        count: Number
     }],
     totalPrice: Number
 });
