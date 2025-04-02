@@ -60,6 +60,7 @@
             outline: none;
             font-size: 20px;
             cursor: pointer;
+            color: #fff;
             &:hover{
                 box-shadow: 0 0 20px 10px rgba(29, 186, 89, 0.3);
                 background-color: #289953;
@@ -71,4 +72,8 @@
 
 .good:hover{
     box-shadow: 0 0 100px 5px rgba(26, 87, 49, 0.25);
+}
+
+a{
+    text-decoration: none!important;
 }
