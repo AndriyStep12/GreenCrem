@@ -3,6 +3,7 @@
     height: auto;
     display: flex;
     flex-direction: row;
+    -webkit-overflow-scrolling: touch; /* Для плавної прокрутки на iOS */
 
     .product_page {
         display: flex;
@@ -108,8 +109,60 @@
 @media (max-width: 1200px) {
     .product_page {
         padding: 40px 20px;
+        flex-direction: column;
+        width: 100%;
     }
 
+    .product_image {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 300px;
+    }
+
+    .product_info {
+        width: 100% !important;
+        padding: 30px 20px !important;
+    }
+
+    .product_info .name,
+    .product_info .price {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product {
+        flex-direction: column;
+    }
+
+    .product_page {
+        padding: 20px 15px;
+    }
+
+    .product_info {
+        padding: 20px 15px !important;
+    }
+
+    .product_info .count {
+        margin: 20px 0;
+    }
+
+    .product_info .btn_row {
+        flex-direction: column;
+        align-items: stretch;
+
+        .first {
+            margin-right: 0;
+            margin-bottom: 15px;
+
+            .addToCart {
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
     .product_info .name,
     .product_info .price {
         font-size: 28px;
