@@ -170,7 +170,7 @@ app.post('/send-order', async (req, res) => {
 Емейл: ${escapeMarkdown(email)}
 
 *Інформація про замовлення:*
-Код замовлення: ${escapeMarkdown(orderPass)}
+Код замовлення: ${escapeMarkdown(orderCode)}
 Загальна вартість замовлення: ${totalPrice}$
 Товари:
 ${cartItems.map(item => `
@@ -240,7 +240,7 @@ ID: ${escapeMarkdown(item.id)}
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: `Підтвердження замовлення ${orderPass} - GreenCrem`,
+            subject: `Підтвердження замовлення ${orderCode} - GreenCrem`,
             html: emailHtml
         };
 
@@ -251,7 +251,7 @@ ID: ${escapeMarkdown(item.id)}
         res.status(200).json({
             success: true,
             message: 'Замовлення успішно створено',
-            orderPass
+            orderCode
         });
 
     } catch (error) {
