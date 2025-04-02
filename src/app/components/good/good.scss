@@ -26,6 +26,10 @@
         display: flex;
         flex-direction: column;
         font-size: 20px;
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        margin: 20px 0;
         .price{
             font-weight: 700;
             margin-top: 20px;
